@@ -1,19 +1,19 @@
-# Jenkins ‰Šúİ’è
+# Jenkins åˆæœŸè¨­å®š
 
-## Administrator password‚Ì“ü—Í
+## Administrator passwordã®å…¥åŠ›
 
 C:\envForHandson\jenkins_home\secrets\initialAdminPassword
-‚É‹LÚ‚³‚ê‚Ä‚¢‚éƒpƒXƒ[ƒh‚ğ“ü—Í‚·‚éB
+ã«è¨˜è¼‰ã•ã‚Œã¦ã„ã‚‹ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å…¥åŠ›ã™ã‚‹ã€‚
 
-## proxy‚Ìİ’è
+## proxyã®è¨­å®š
 
 proxy.alpha.co.jp:8080
 
-## plugin‚Ìw’è
+## pluginã®æŒ‡å®š
 
-•K—v‚É‰‚¶‚Äplugin‚ğ‘I‘ğ‚·‚é or
-uInstall suggested pluginv‚ğ‘I‘ğ
+å¿…è¦ã«å¿œã˜ã¦pluginã‚’é¸æŠã™ã‚‹ or
+ã€ŒInstall suggested pluginã€ã‚’é¸æŠ
 
-Adminƒ†[ƒU‚ğì¬
+Adminãƒ¦ãƒ¼ã‚¶ã‚’ä½œæˆ
 
 
