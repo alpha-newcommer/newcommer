@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CageFactory {
-	private static CageFactory INSTANCE = new CageFactory();
+	private static CageFactory instance = new CageFactory();
 	
 	Map<String, Cage> cageMap;
 	
@@ -20,14 +20,14 @@ public class CageFactory {
 	}
 	
 	public static Cage getCage(String cageName) {
-		return INSTANCE.cageMap.get(cageName);
+		return instance.cageMap.get(cageName);
 	}
 	
 	public static List<String> getCageNames() {
-		return Collections.unmodifiableList(new ArrayList<>(INSTANCE.cageMap.keySet()));
+		return Collections.unmodifiableList(new ArrayList<>(instance.cageMap.keySet()));
 	}
 	
 	public static List<Cage> getAllCages() {
-		return Collections.unmodifiableList(new ArrayList<>(INSTANCE.cageMap.values()));
+		return Collections.unmodifiableList(new ArrayList<>(instance.cageMap.values()));
 	}
 }

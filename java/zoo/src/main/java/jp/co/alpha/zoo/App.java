@@ -56,13 +56,17 @@ public class App {
 	}
 
 	private void printAllAnimals() {
+		int id = 1;
 		for (Cage cage : CageFactory.getAllCages()) {
 			for (Animal animal : cage.getAllAnimals()) {
 				StringBuilder sb = new StringBuilder();
+				sb.append(id).append("\t");
 				sb.append(cage.getName()).append("\t");
 				sb.append(animal.getName()).append("\t");
 				sb.append(animal.getWeight()).append("\t");
-				sb.append("").append("\r\n");
+				sb.append("");
+				System.out.println(sb.toString());
+				id++;
 			}
 
 		}

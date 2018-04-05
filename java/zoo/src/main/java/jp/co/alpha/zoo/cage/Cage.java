@@ -14,9 +14,7 @@ public abstract class Cage {
 		animalList = new ArrayList<>();
 	}
 	
-	public String getName() {
-		return this.getClass().getSimpleName();
-	}
+	public abstract String getName();
 	
 	public List<Animal> getAllAnimals() {
 		return Collections.unmodifiableList(animalList);
