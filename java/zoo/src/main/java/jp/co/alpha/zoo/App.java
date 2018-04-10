@@ -3,6 +3,7 @@ package jp.co.alpha.zoo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import jp.co.alpha.zoo.cage.Cage;
 import jp.co.alpha.zoo.cage.CageFactory;
 import jp.co.alpha.zoo.exception.BusinessException;
 import jp.co.alpha.zoo.exception.SystemException;
+import jp.co.alpha.zoo.ribbon.RibbonManager;
 
 public class App {
 	private static Logger logger = LoggerFactory.getLogger(App.class);
@@ -35,16 +37,20 @@ public class App {
 			cmd = menue(in);
 			switch (cmd) {
 			case "1":
+				// 動物を檻に入れる
 				putAnimal(in);
 				break;
 			case "2":
-				printAllAnimals();
+				// 動物にリボン贈呈
+				setRibｂon(in);
 				break;
 			case "3":
-				System.out.println("3");
+				// 全動物リスト表示
+				printAllAnimals();
 				break;
 			case "4":
-				System.out.println("4");
+				// リボン付き動物リスト表示
+				printRibbonAnimals();
 				break;
 			case "9":
 				isExit = true;
@@ -52,6 +58,57 @@ public class App {
 			default:
 				throw new SystemException("有り得ないメニュー番号:" + cmd);
 			}
+		}
+	}
+	
+	private void printRibbonAnimals() {
+		Map<String, Animal> ribbonMap = RibbonManager.getRibbonMap();
+		int id = 1;
+		for (Entry<String, Animal> entry : ribbonMap.entrySet()) {
+			if (entry.getValue() == null) {
+				continue;
+			}
+			StringBuilder sb = new StringBuilder();
+			sb.append(id).append("\t");
+			sb.append(entry.getKey()).append("\t");
+			sb.append(entry.getValue().getName()).append("\t");
+			sb.append(entry.getValue().getWeight());
+			System.out.println(sb.toString());
+			id++;
+		}
+	}
+
+	private void setRibｂon(BufferedReader in) throws IOException {
+		Map<String, String> menuMap = new LinkedHashMap<>();
+		List<String> ribbonNames = RibbonManager.getRibbonNames();
+		for (int i = 0; i < ribbonNames.size(); i++) {
+			menuMap.put(String.valueOf(i + 1), ribbonNames.get(i));
+		}
+		String cmd = getCommand(menuMap, in, "リボン番号選択", "入力誤り。リボン番号を入力してください。");
+		String targetRibbonName =  menuMap.get(cmd);
+		List<Animal> allAnimalList = new ArrayList<>();
+		int id = 1;
+		for (Cage cage : CageFactory.getAllCages()) {
+			for (Animal animal : cage.getAllAnimals()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(id).append("\t");
+				sb.append(cage.getName()).append("\t");
+				sb.append(animal.getName()).append("\t");
+				sb.append(animal.getWeight()).append("\t");
+				sb.append("");
+
+				menuMap.put(String.valueOf(id), sb.toString());
+				allAnimalList.add(animal);
+				id++;
+			}
+		}
+		cmd = getCommand(menuMap, in, "動物番号選択", "入力誤り。動物番号を入力してください。");
+		Animal targetAnimal = allAnimalList.get(Integer.parseInt(cmd) - 1);
+		
+		try {
+			RibbonManager.setRibbon(targetRibbonName, targetAnimal);
+		} catch (BusinessException e) {
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -70,7 +127,6 @@ public class App {
 			}
 
 		}
-
 	}
 
 	private void putAnimal(BufferedReader in) throws IOException {
@@ -121,9 +177,8 @@ public class App {
 		menuMap.put("3", "全動物リスト表示");
 		menuMap.put("4", "リボン付き動物リスト表示");
 		menuMap.put("9", "アプリ終了");
-		String cmd = getCommand(menuMap, in, "メニュー選択", "入力誤り。メニュー番号を入力してください。");
 
-		return cmd;
+		return getCommand(menuMap, in, "メニュー選択", "入力誤り。メニュー番号を入力してください。");
 	}
 
 	private String getCommand(Map<String, String> menuMap, BufferedReader in, String orderMsg, String errMsg)
