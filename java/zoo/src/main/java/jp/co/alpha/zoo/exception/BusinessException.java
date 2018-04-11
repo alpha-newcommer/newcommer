@@ -1,5 +1,8 @@
 package jp.co.alpha.zoo.exception;
 
+/**
+ * ビジネス例外
+ */
 public class BusinessException extends Exception {
 
 	/**
@@ -7,6 +10,10 @@ public class BusinessException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * コンストラクタ
+	 * @param msg
+	 */
 	public BusinessException(String msg) {
 		super(msg);
 	}

@@ -6,11 +6,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 檻ファクトリー
+ */
 public class CageFactory {
-	private static CageFactory instance = new CageFactory();
+	/**
+	 * インスタンス
+	 */
+	private static final CageFactory INSTANCE = new CageFactory();
 	
-	Map<String, Cage> cageMap;
+	/**
+	 * 檻の名前とオブジェクトの管理マップ
+	 */
+	private final Map<String, Cage> cageMap;
 	
+	/**
+	 * コンストラクタ
+	 */
 	private CageFactory() {
 		cageMap = new HashMap<>();
 		cageMap.put("normal", new NormalCage());
@@ -19,15 +31,28 @@ public class CageFactory {
 		cageMap.put("large", new LargeCage());
 	}
 	
+	/**
+	 * 指定の名前の檻を取得
+	 * @param cageName
+	 * @return
+	 */
 	public static Cage getCage(String cageName) {
-		return instance.cageMap.get(cageName);
+		return INSTANCE.cageMap.get(cageName);
 	}
 	
+	/**
+	 * 管理している檻の名前をリストで取得
+	 * @return
+	 */
 	public static List<String> getCageNames() {
-		return Collections.unmodifiableList(new ArrayList<>(instance.cageMap.keySet()));
+		return Collections.unmodifiableList(new ArrayList<>(INSTANCE.cageMap.keySet()));
 	}
 	
+	/**
+	 * 管理している檻オブジェクトをリストで取得
+	 * @return
+	 */
 	public static List<Cage> getAllCages() {
-		return Collections.unmodifiableList(new ArrayList<>(instance.cageMap.values()));
+		return Collections.unmodifiableList(new ArrayList<>(INSTANCE.cageMap.values()));
 	}
 }
