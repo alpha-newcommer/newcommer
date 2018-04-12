@@ -5,14 +5,20 @@ package jp.co.alpha.zoo.animal;
  */
 public interface Animal {
 	/**
-	 * 体重取得
+	 * 個体識別ID
 	 * @return
 	 */
-	int getWeight();
+	int getId();
 	
 	/**
 	 * 動物名取得
 	 * @return
 	 */
 	String getName();
+	
+	/**
+	 * 体重取得
+	 * @return
+	 */
+	int getWeight();
 }

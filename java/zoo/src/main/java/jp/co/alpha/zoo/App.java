@@ -3,7 +3,6 @@ package jp.co.alpha.zoo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +106,7 @@ public class App {
 			StringBuilder sb = new StringBuilder();
 			sb.append(id).append("\t");
 			sb.append(entry.getKey()).append("\t");
+			sb.append(entry.getValue().getId()).append("\t");
 			sb.append(entry.getValue().getName()).append("\t");
 			sb.append(entry.getValue().getWeight());
 			System.out.println(sb.toString());
@@ -129,25 +129,20 @@ public class App {
 		int cmdId = getCommand(menuMap, in, "リボン番号選択", "入力誤り。リボン番号を入力してください。");
 		String targetRibbonName = menuMap.get(cmdId);
 		
-		// 対象の動物の選択
-		menuMap.clear();
-		List<Animal> allAnimalList = new ArrayList<>();
-		int id = 1;
-		for (Cage cage : CageFactory.getAllCages()) {
-			for (Animal animal : cage.getAllAnimals()) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(cage.getName()).append("\t");
-				sb.append(animal.getName()).append("\t");
-				sb.append(animal.getWeight()).append("\t");
-				sb.append("");
-
-				menuMap.put(id, sb.toString());
-				allAnimalList.add(animal);
-				id++;
+		// 対象の動物を選択するまでループ
+		Animal targetAnimal = null;
+		String cmd = null;
+		while (true) {
+			System.out.print("リボンを贈呈する動物の個体識別IDを入力＞");
+			cmd = in.readLine();
+			if (StringUtils.isNumeric(cmd)) {
+				targetAnimal = AnimalFactory.getAnimal(Integer.parseInt(cmd));
 			}
+			if (targetAnimal != null) {
+				break;
+			}
+			System.err.println("存在する動物の個体識別IDを入力してください。");
 		}
-		cmdId = getCommand(menuMap, in, "動物番号選択", "入力誤り。動物番号を入力してください。");
-		Animal targetAnimal = allAnimalList.get(cmdId - 1);
 
 		try {
 			// 動物にリボン設定
@@ -161,19 +156,22 @@ public class App {
 	 * 全動物リスト表示
 	 */
 	private void printAllAnimals() {
-		int id = 1;
+		Map<String, Animal> ribbonMap = RibbonManager.getRibbonMap();
 		for (Cage cage : CageFactory.getAllCages()) {
 			for (Animal animal : cage.getAllAnimals()) {
 				StringBuilder sb = new StringBuilder();
-				sb.append(id).append("\t");
 				sb.append(cage.getName()).append("\t");
+				sb.append(animal.getId()).append("\t");
 				sb.append(animal.getName()).append("\t");
 				sb.append(animal.getWeight()).append("\t");
-				sb.append("");
+				// リボン付きの場合はリボン名も表示
+				for (Entry<String, Animal> entry : ribbonMap.entrySet()) {
+					if ((entry.getValue() != null) && entry.getValue().equals(animal)) {
+						sb.append(entry.getKey());
+					}
+				}
 				System.out.println(sb.toString());
-				id++;
 			}
-
 		}
 	}
 
@@ -205,9 +203,13 @@ public class App {
 
 		// 動物の体重を入力するまでループ
 		String cmd = null;
-		while (!StringUtils.isNumeric(cmd)) {
+		while (true) {
 			System.out.print(animalName + "の体重（kg）を入力＞");
 			cmd = in.readLine();
+			if (StringUtils.isNumeric(cmd)) {
+				break;
+			}
+			System.err.println("数値を入力してください。");
 		}
 		int weight = Integer.parseInt(cmd);
 

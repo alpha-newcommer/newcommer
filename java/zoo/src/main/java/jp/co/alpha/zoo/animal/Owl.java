@@ -1,10 +1,10 @@
 package jp.co.alpha.zoo.animal;
 
-public class Tiger implements Animal {
+public class Owl implements Animal {
 	private int id;
 	private int weight;
 	
-	public Tiger(Integer id, Integer weight) {
+	public Owl(Integer id, Integer weight) {
 		this.id = id;
 		this.weight = weight;
 	}
@@ -18,6 +18,6 @@ public class Tiger implements Animal {
 	}
 	@Override
 	public String getName() {
-		return "トラ";
+		return "フクロウ";
 	}
 }
