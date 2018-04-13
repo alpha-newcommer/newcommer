@@ -6,9 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Map;
 
+import jp.co.alpha.zoo.animal.AnimalType;
 import jp.co.alpha.zoo.cage.Cage;
 import jp.co.alpha.zoo.exception.SystemException;
 
@@ -34,32 +36,41 @@ public class DBAccess {
 		}
 	}
 
-	public List<Cage> getCages() {
-		List<Cage> cageList = new ArrayList<>();
-		execute("SELECT id, name, type FROM m_cage;", (ResultSet rslt) -> {
-			try {
-				while (rslt.next()) {
-					String type = rslt.getString("type");
-					Cage cage = (Cage) Class.forName(type).newInstance();
-					cage.setId(rslt.getInt("id"));
-					cageList.add(cage);
-				}
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-				throw new SystemException("檻マスタデータ取得に失敗しました。", e);
-			}
-		});
-
-		return cageList;
-	}
-
-	private void execute(String query, Consumer<ResultSet> setResult) {
+	public Map<String, Cage> getCages() {
+		Map<String, Cage> cageMap = new LinkedHashMap<>();
+		String query = "SELECT id, name, type FROM m_cage;";
 		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
 				Statement stm = conn.createStatement();
 				ResultSet rslt = stm.executeQuery(query);) {
-			setResult.accept(rslt);
-		} catch (SQLException e) {
-			throw new SystemException("DB接続に失敗しました。", e);
+			while (rslt.next()) {
+				String name = rslt.getString("name");
+				String type = rslt.getString("type");
+				Cage cage = (Cage) Class.forName(type).newInstance();
+				cage.setId(rslt.getInt("id"));
+				cageMap.put(name, cage);
+			}
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			throw new SystemException("檻マスタデータ取得に失敗しました。", e);
 		}
 
+		return cageMap;
+	}
+
+	public List<AnimalType> getAnimalTypes() {
+		List<AnimalType> animalTypeList = new ArrayList<>();
+		String query = "SELECT id, name FROM m_name;";
+		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
+				Statement stm = conn.createStatement();
+				ResultSet rslt = stm.executeQuery(query);) {
+			while (rslt.next()) {
+				int id = rslt.getInt("id");
+				String name = rslt.getString("name");
+				animalTypeList.add(new AnimalType(id, name));
+			}
+		} catch (SQLException e) {
+			throw new SystemException("動物マスタデータ取得に失敗しました。", e);
+		}
+
+		return animalTypeList;
 	}
 }

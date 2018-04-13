@@ -2,7 +2,6 @@ package jp.co.alpha.zoo.cage;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +26,7 @@ public class CageFactory {
 	 */
 	private CageFactory() {
 		// DBより檻の一覧を取得し、管理マップへ格納
-		cageMap = new HashMap<>();
-		List<Cage> cageList = DBAccess.INSTANCE.getCages();
-		for (Cage cage : cageList) {
-			cageMap.put(cage.getName(), cage);
-		}
+		cageMap =  DBAccess.INSTANCE.getCages();
 	}
 	
 	/**

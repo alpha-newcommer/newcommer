@@ -4,9 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import jp.co.alpha.zoo.db.DBAccess;
 import jp.co.alpha.zoo.exception.SystemException;
 
 /**
@@ -17,31 +19,17 @@ public class AnimalFactory {
 	 * インスタンス
 	 */
 	private static final AnimalFactory INSTANCE = new AnimalFactory();
+	
 	/**
-	 * 動物の名前とクラスの管理マップ
+	 * 動物のマスター情報の管理マップ
 	 */
-	private final Map<String, Class<? extends Animal>> animalClassMap;
-	/**
-	 * 生成した動物の個体識別IDとオブジェクトの管理マップ
-	 */
-	private final Map<Integer, Animal> animalMap;
-	/**
-	 * 個体識別ID生成用変数
-	 */
-	private int idCounter;
+	private final List<AnimalType> animalTypes;
 
 	/**
 	 * コンストラクタ
 	 */
 	private AnimalFactory() {
-		animalClassMap = new HashMap<>();
-		animalClassMap.put("rabbit", Rabbit.class);
-		animalClassMap.put("tiger", Tiger.class);
-		animalClassMap.put("zebra", Zebra.class);
-		animalClassMap.put("owl", Owl.class);
-
-		animalMap = new HashMap<>();
-		idCounter = 1;
+		animalTypes = DBAccess.INSTANCE.getAnimalTypes();
 	}
 
 	/**
@@ -53,15 +41,17 @@ public class AnimalFactory {
 	 */
 	public static Animal createAnimal(String animalName, int weight) {
 		Animal animal = null;
-		try {
-			int id = INSTANCE.idCounter++;
-			Class<? extends Animal> targetAnimalClass = INSTANCE.animalClassMap.get(animalName);
-			animal = targetAnimalClass.getConstructor(Integer.class, Integer.class).newInstance(id, weight);
-			INSTANCE.animalMap.put(id, animal);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw new SystemException("存在しない動物名を指定されました。", e);
-		}
+		
+		// TODO DB add
+//		try {
+//			int id = INSTANCE.idCounter++;
+//			Class<? extends Animal> targetAnimalClass = INSTANCE.animalClassMap.get(animalName);
+//			animal = targetAnimalClass.getConstructor(Integer.class, Integer.class).newInstance(id, weight);
+//			INSTANCE.animalMap.put(id, animal);
+//		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+//				| NoSuchMethodException | SecurityException e) {
+//			throw new SystemException("存在しない動物名を指定されました。", e);
+//		}
 
 		return animal;
 	}
@@ -72,7 +62,9 @@ public class AnimalFactory {
 	 * @return
 	 */
 	public static List<String> getAnimalNames() {
-		return Collections.unmodifiableList(new ArrayList<String>(INSTANCE.animalClassMap.keySet()));
+		List<String> nameList = new ArrayList<>();
+		INSTANCE.animalTypes.forEach(type -> nameList.add(type.getName()));
+		return Collections.unmodifiableList(new ArrayList<String>(nameList));
 	}
 	
 	/**
@@ -81,6 +73,9 @@ public class AnimalFactory {
 	 * @return
 	 */
 	public static Animal getAnimal(int id) {
-		return INSTANCE.animalMap.get(id);
+		Animal animal = null;
+		// TODO DB get
+//		return INSTANCE.animalMap.get(id);
+		return animal;
 	}
 }
