@@ -1,25 +1,31 @@
 package jp.co.alpha.zoo.cage;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jp.co.alpha.zoo.animal.Animal;
-import jp.co.alpha.zoo.db.DBAccess;
 import jp.co.alpha.zoo.exception.BusinessException;
 
 /**
  * 檻インターフェース
  */
 public abstract class Cage {
-	
 	/**
-	 * コード
+	 * 動物管理リスト
 	 */
-	private int cd;
+	protected final List<Animal> animalList;
 
+	/**
+	 * 檻ID
+	 */
+	private int id;
+	
 	/**
 	 * コンストラクタ
 	 */
 	protected Cage() {
+		animalList = new ArrayList<>();
 	}
 	
 	/**
@@ -33,7 +39,7 @@ public abstract class Cage {
 	 * @return
 	 */
 	public List<Animal> getAllAnimals() {
-		return DBAccess.INSTANCE.getAnimals(this);
+		return Collections.unmodifiableList(animalList);
 	}
 	
 	/**
@@ -45,7 +51,7 @@ public abstract class Cage {
 		// 格納可能チェック
 		check(animal);
 		// 檻に動物オブジェクトを格納
-		DBAccess.INSTANCE.addAnimalToCage(animal, this);
+		animalList.add(animal);	
 	}
 	
 	/**
@@ -55,11 +61,17 @@ public abstract class Cage {
 	 */
 	abstract void check(Animal animal) throws BusinessException;
 
-	public int getCd() {
-		return cd;
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
 	}
 
-	public void setCd(int cd) {
-		this.cd = cd;
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
 	}
 }

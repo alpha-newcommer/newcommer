@@ -15,37 +15,42 @@ public class CageFactory {
 	 * インスタンス
 	 */
 	private static final CageFactory INSTANCE = new CageFactory();
-
+	
 	/**
 	 * 檻の名前とオブジェクトの管理マップ
 	 */
 	private final Map<String, Cage> cageMap;
-
+	
 	/**
 	 * コンストラクタ
 	 */
 	private CageFactory() {
 		// DBより檻の一覧を取得し、管理マップへ格納
-		cageMap = DBAccess.INSTANCE.getCages();
+		cageMap =  DBAccess.INSTANCE.getCages();
 	}
-
+	
 	/**
 	 * 指定の名前の檻を取得
-	 * 
 	 * @param cageName
 	 * @return
 	 */
 	public static Cage getCage(String cageName) {
 		return INSTANCE.cageMap.get(cageName);
 	}
-
+	
 	/**
 	 * 管理している檻の名前をリストで取得
-	 * 
 	 * @return
 	 */
 	public static List<String> getCageNames() {
 		return Collections.unmodifiableList(new ArrayList<>(INSTANCE.cageMap.keySet()));
 	}
-
+	
+	/**
+	 * 管理している檻オブジェクトをリストで取得
+	 * @return
+	 */
+	public static List<Cage> getAllCages() {
+		return Collections.unmodifiableList(new ArrayList<>(INSTANCE.cageMap.values()));
+	}
 }

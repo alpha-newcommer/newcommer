@@ -1,12 +1,6 @@
 package jp.co.alpha.zoo.animal;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import jp.co.alpha.zoo.db.DBAccess;
 import jp.co.alpha.zoo.exception.SystemException;
@@ -15,21 +9,11 @@ import jp.co.alpha.zoo.exception.SystemException;
  * 動物ファクトリー
  */
 public class AnimalFactory {
-	/**
-	 * インスタンス
-	 */
-	private static final AnimalFactory INSTANCE = new AnimalFactory();
-	
-	/**
-	 * 動物のマスター情報の管理マップ
-	 */
-	private final List<AnimalType> animalTypes;
 
 	/**
 	 * コンストラクタ
 	 */
 	private AnimalFactory() {
-		animalTypes = DBAccess.INSTANCE.getAnimalTypes();
 	}
 
 	/**
@@ -40,18 +24,15 @@ public class AnimalFactory {
 	 * @return
 	 */
 	public static Animal createAnimal(String animalName, int weight) {
-		Animal animal = null;
+		List<String> nameList = getAnimalNames();
+		if (!nameList.contains(animalName)) {
+			throw new SystemException("存在しない動物名を指定されました。");
+		}
 		
-		// TODO DB add
-//		try {
-//			int id = INSTANCE.idCounter++;
-//			Class<? extends Animal> targetAnimalClass = INSTANCE.animalClassMap.get(animalName);
-//			animal = targetAnimalClass.getConstructor(Integer.class, Integer.class).newInstance(id, weight);
-//			INSTANCE.animalMap.put(id, animal);
-//		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-//				| NoSuchMethodException | SecurityException e) {
-//			throw new SystemException("存在しない動物名を指定されました。", e);
-//		}
+		AnimalImpl animal = new AnimalImpl();
+
+		animal.setName(animalName);
+		animal.setWeight(weight);
 
 		return animal;
 	}
@@ -62,9 +43,7 @@ public class AnimalFactory {
 	 * @return
 	 */
 	public static List<String> getAnimalNames() {
-		List<String> nameList = new ArrayList<>();
-		INSTANCE.animalTypes.forEach(type -> nameList.add(type.getName()));
-		return Collections.unmodifiableList(new ArrayList<String>(nameList));
+		return DBAccess.INSTANCE.getAnimalNames();
 	}
 	
 	/**
@@ -73,9 +52,6 @@ public class AnimalFactory {
 	 * @return
 	 */
 	public static Animal getAnimal(int id) {
-		Animal animal = null;
-		// TODO DB get
-//		return INSTANCE.animalMap.get(id);
-		return animal;
+		return DBAccess.INSTANCE.getAnimal(id);
 	}
 }

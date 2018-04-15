@@ -3,8 +3,8 @@ package jp.co.alpha.zoo.cage;
 import jp.co.alpha.zoo.animal.Animal;
 import jp.co.alpha.zoo.exception.BusinessException;
 
-public class HardyCage extends Cage {
-	private static final String NAME = "頑丈な檻";
+public class CuteCage extends Cage {
+	private static final String NAME = "かわいい檻";
 
 	@Override
 	public String getName() {
@@ -13,9 +13,8 @@ public class HardyCage extends Cage {
 	
 	@Override
 	void check(Animal animal) throws BusinessException {
-		int num = getAllAnimals().size() + 1;
-		if (num > 3) {
-			throw new BusinessException("3頭までの制限を超えました。頭数：" + num);
+		if (animal.getWeight() > 2) {
+			throw new BusinessException("1匹2kgまでの制限を超えました。重量：" + animal.getWeight());
 		}
 	}
 

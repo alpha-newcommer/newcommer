@@ -13,7 +13,7 @@ public class HardyCage extends Cage {
 	
 	@Override
 	void check(Animal animal) throws BusinessException {
-		int num = getAllAnimals().size() + 1;
+		int num = animalList.size() + 1;
 		if (num > 3) {
 			throw new BusinessException("3頭までの制限を超えました。頭数：" + num);
 		}
