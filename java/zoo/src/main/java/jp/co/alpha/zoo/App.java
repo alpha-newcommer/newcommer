@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import jp.co.alpha.zoo.animal.Animal;
 import jp.co.alpha.zoo.animal.AnimalFactory;
+import jp.co.alpha.zoo.animal.AnimalType;
 import jp.co.alpha.zoo.cage.Cage;
 import jp.co.alpha.zoo.cage.CageFactory;
 import jp.co.alpha.zoo.exception.BusinessException;
@@ -94,24 +95,52 @@ public class App {
 	}
 
 	/**
-	 * リボン付き動物リスト表示
+	 * 檻に動物を入れる処理
+	 * @param in
+	 * @throws IOException
 	 */
-	private void printRibbonAnimals() {
-		Map<String, Animal> ribbonMap = RibbonManager.getRibbonMap();
-		int id = 1;
-		for (Entry<String, Animal> entry : ribbonMap.entrySet()) {
-			if (entry.getValue() == null) {
-				continue;
-			}
-			StringBuilder sb = new StringBuilder();
-			sb.append(id).append("\t");
-			sb.append(entry.getKey()).append("\t");
-			sb.append(entry.getValue().getId()).append("\t");
-			sb.append(entry.getValue().getName()).append("\t");
-			sb.append(entry.getValue().getWeight());
-			System.out.println(sb.toString());
-			id++;
+	private void putAnimal(BufferedReader in) throws IOException {
+		// 檻の選択
+		Map<Integer, String> menuMap = new LinkedHashMap<>();
+		List<Cage> cageList = CageFactory.getAllCages();
+		for (Cage cage: cageList) {
+			menuMap.put(cage.getCd(), cage.getName());
 		}
+		int cmdId = getCommand(menuMap, in, "ケージ番号選択", "入力誤り。ケージ番号を入力してください。");
+		Cage cage = CageFactory.getCage(cmdId);
+
+		// 動物の選択
+		menuMap.clear();
+		List<AnimalType> animalTypeList = AnimalFactory.getAnimalTypeList();
+		for (AnimalType animalType : animalTypeList) {
+			menuMap.put(animalType.getCd(), animalType.getName());
+		}
+		cmdId = getCommand(menuMap, in, "動物の番号選択", "入力誤り。動物の番号を入力してください。");
+		int animalCd = cmdId;
+		String animalName = menuMap.get(cmdId);
+
+		// 動物の体重を入力するまでループ
+		String cmd = null;
+		while (true) {
+			System.out.print(animalName + "の体重（kg）を入力＞");
+			cmd = in.readLine();
+			if (StringUtils.isNumeric(cmd)) {
+				break;
+			}
+			System.err.println("数値を入力してください。");
+		}
+		int weight = Integer.parseInt(cmd);
+
+		// 動物名と体重から動物オブジェクト生成
+		Animal animal = AnimalFactory.createAnimal(animalCd, weight);
+
+		// ケージに動物を入れる
+		try {
+			cage.in(animal);
+		} catch (BusinessException e) {
+			System.err.println(e.getMessage());
+		}
+
 	}
 
 	/**
@@ -176,53 +205,24 @@ public class App {
 	}
 
 	/**
-	 * 檻に動物を入れる処理
-	 * @param in
-	 * @throws IOException
+	 * リボン付き動物リスト表示
 	 */
-	private void putAnimal(BufferedReader in) throws IOException {
-		int cmdId = 0;
-
-		// 檻の選択
-		Map<Integer, String> menuMap = new LinkedHashMap<>();
-		List<String> cageNames = CageFactory.getCageNames();
-		for (int i = 0; i < cageNames.size(); i++) {
-			menuMap.put(i + 1, cageNames.get(i));
-		}
-		cmdId = getCommand(menuMap, in, "ケージ番号選択", "入力誤り。ケージ番号を入力してください。");
-		Cage cage = CageFactory.getCage(cageNames.get(cmdId - 1));
-
-		// 動物の選択
-		menuMap.clear();
-		List<String> animalNames = AnimalFactory.getAnimalNames();
-		for (int i = 0; i < animalNames.size(); i++) {
-			menuMap.put(i + 1, animalNames.get(i));
-		}
-		cmdId = getCommand(menuMap, in, "動物の番号選択", "入力誤り。動物の番号を入力してください。");
-		String animalName = animalNames.get(cmdId - 1);
-
-		// 動物の体重を入力するまでループ
-		String cmd = null;
-		while (true) {
-			System.out.print(animalName + "の体重（kg）を入力＞");
-			cmd = in.readLine();
-			if (StringUtils.isNumeric(cmd)) {
-				break;
+	private void printRibbonAnimals() {
+		Map<String, Animal> ribbonMap = RibbonManager.getRibbonMap();
+		int id = 1;
+		for (Entry<String, Animal> entry : ribbonMap.entrySet()) {
+			if (entry.getValue() == null) {
+				continue;
 			}
-			System.err.println("数値を入力してください。");
+			StringBuilder sb = new StringBuilder();
+			sb.append(id).append("\t");
+			sb.append(entry.getKey()).append("\t");
+			sb.append(entry.getValue().getId()).append("\t");
+			sb.append(entry.getValue().getName()).append("\t");
+			sb.append(entry.getValue().getWeight());
+			System.out.println(sb.toString());
+			id++;
 		}
-		int weight = Integer.parseInt(cmd);
-
-		// 動物名と体重から動物オブジェクト生成
-		Animal animal = AnimalFactory.createAnimal(animalName, weight);
-
-		// ケージに動物を入れる
-		try {
-			cage.in(animal);
-		} catch (BusinessException e) {
-			System.err.println(e.getMessage());
-		}
-
 	}
 
 	/**

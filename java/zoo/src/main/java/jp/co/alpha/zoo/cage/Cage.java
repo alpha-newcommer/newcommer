@@ -12,6 +12,11 @@ import jp.co.alpha.zoo.exception.BusinessException;
  */
 public abstract class Cage {
 	/**
+	 * コード
+	 */
+	private int cd;
+	
+	/**
 	 * 動物管理リスト
 	 */
 	protected final List<Animal> animalList;
@@ -55,4 +60,18 @@ public abstract class Cage {
 	 * @throws BusinessException 格納条件を満たさない場合
 	 */
 	abstract void check(Animal animal) throws BusinessException;
+
+	/**
+	 * @return the cd
+	 */
+	public int getCd() {
+		return cd;
+	}
+
+	/**
+	 * @param cd the cd to set
+	 */
+	public void setCd(int cd) {
+		this.cd = cd;
+	}
 }

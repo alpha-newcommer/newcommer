@@ -1,6 +1,7 @@
 package jp.co.alpha.zoo.animal;
 
 public class Rabbit implements Animal {
+	public static final String NAME = "ウサギ";
 	private int id;
 	private int weight;
 	
@@ -18,6 +19,6 @@ public class Rabbit implements Animal {
 	}
 	@Override
 	public String getName() {
-		return "ウサギ";
+		return NAME;
 	}
 }

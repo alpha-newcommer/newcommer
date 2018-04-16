@@ -18,9 +18,9 @@ public class AnimalFactory {
 	 */
 	private static final AnimalFactory INSTANCE = new AnimalFactory();
 	/**
-	 * 動物の名前とクラスの管理マップ
+	 * 動物のコードとクラスの管理マップ
 	 */
-	private final Map<String, Class<? extends Animal>> animalClassMap;
+	private final List<AnimalType> animalTypeList;
 	/**
 	 * 生成した動物の個体識別IDとオブジェクトの管理マップ
 	 */
@@ -34,11 +34,11 @@ public class AnimalFactory {
 	 * コンストラクタ
 	 */
 	private AnimalFactory() {
-		animalClassMap = new HashMap<>();
-		animalClassMap.put("rabbit", Rabbit.class);
-		animalClassMap.put("tiger", Tiger.class);
-		animalClassMap.put("zebra", Zebra.class);
-		animalClassMap.put("owl", Owl.class);
+		animalTypeList = new ArrayList<>();
+		animalTypeList.add(new AnimalType(1, Rabbit.NAME, Rabbit.class));
+		animalTypeList.add(new AnimalType(2, Tiger.NAME, Tiger.class));
+		animalTypeList.add(new AnimalType(3, Zebra.NAME, Zebra.class));
+		animalTypeList.add(new AnimalType(4, Owl.NAME, Owl.class));
 
 		animalMap = new HashMap<>();
 		idCounter = 1;
@@ -51,12 +51,16 @@ public class AnimalFactory {
 	 * @param weight
 	 * @return
 	 */
-	public static Animal createAnimal(String animalName, int weight) {
+	public static Animal createAnimal(int cd, int weight) {
 		Animal animal = null;
 		try {
 			int id = INSTANCE.idCounter++;
-			Class<? extends Animal> targetAnimalClass = INSTANCE.animalClassMap.get(animalName);
-			animal = targetAnimalClass.getConstructor(Integer.class, Integer.class).newInstance(id, weight);
+			for (AnimalType animalType: INSTANCE.animalTypeList) {
+				if (animalType.getCd() == cd) {
+					animal = animalType.getType().getConstructor(Integer.class, Integer.class).newInstance(id, weight);
+					break;
+				}
+			}
 			INSTANCE.animalMap.put(id, animal);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
@@ -67,12 +71,12 @@ public class AnimalFactory {
 	}
 
 	/**
-	 * 管理している動物名をリストで取得
+	 * 管理している動物のコードとクラスの管理リストを取得
 	 * 
 	 * @return
 	 */
-	public static List<String> getAnimalNames() {
-		return Collections.unmodifiableList(new ArrayList<String>(INSTANCE.animalClassMap.keySet()));
+	public static List<AnimalType> getAnimalTypeList() {
+		return Collections.unmodifiableList(INSTANCE.animalTypeList);
 	}
 	
 	/**
