@@ -1,5 +1,6 @@
 package jp.co.alpha.zoo.cage;
 
+import java.util.Collections;
 import java.util.List;
 
 import jp.co.alpha.zoo.animal.Animal;
@@ -10,30 +11,29 @@ import jp.co.alpha.zoo.exception.BusinessException;
  * 檻インターフェース
  */
 public abstract class Cage {
-	
 	/**
 	 * コード
 	 */
 	private int cd;
+	
+	/**
+	 * 檻名
+	 */
+	private String name;
 
 	/**
 	 * コンストラクタ
 	 */
-	protected Cage() {
+	protected Cage(String name) {
+		this.name = name;
 	}
-	
-	/**
-	 * 檻名取得
-	 * @return
-	 */
-	public abstract String getName();
 	
 	/**
 	 * この檻で管理している動物のオブジェクトをリストで取得
 	 * @return
 	 */
 	public List<Animal> getAllAnimals() {
-		return DBAccess.INSTANCE.getAnimals(this);
+		return Collections.unmodifiableList(DBAccess.INSTANCE.getAnimals(this));
 	}
 	
 	/**
@@ -41,11 +41,11 @@ public abstract class Cage {
 	 * @param animal
 	 * @throws BusinessException
 	 */
-	public void in(Animal animal) throws BusinessException {
+	public void in(int animalCd, Animal animal) throws BusinessException {
 		// 格納可能チェック
 		check(animal);
 		// 檻に動物オブジェクトを格納
-		DBAccess.INSTANCE.addAnimalToCage(animal, this);
+		DBAccess.INSTANCE.addAnimalToCage(this, animalCd, animal.getWeight());
 	}
 	
 	/**
@@ -55,11 +55,31 @@ public abstract class Cage {
 	 */
 	abstract void check(Animal animal) throws BusinessException;
 
+	/**
+	 * @return the cd
+	 */
 	public int getCd() {
 		return cd;
 	}
 
+	/**
+	 * @param cd the cd to set
+	 */
 	public void setCd(int cd) {
 		this.cd = cd;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 }

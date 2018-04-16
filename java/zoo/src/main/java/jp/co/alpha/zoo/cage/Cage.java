@@ -11,11 +11,17 @@ import jp.co.alpha.zoo.exception.BusinessException;
  * 檻インターフェース
  */
 public abstract class Cage {
+	
 	/**
 	 * コード
 	 */
 	private int cd;
-	
+
+	/**
+	 * 檻名
+	 */
+	private String name;
+
 	/**
 	 * 動物管理リスト
 	 */
@@ -24,15 +30,10 @@ public abstract class Cage {
 	/**
 	 * コンストラクタ
 	 */
-	protected Cage() {
+	protected Cage(String name) {
+		this.name = name;
 		animalList = new ArrayList<>();
 	}
-	
-	/**
-	 * 檻名取得
-	 * @return
-	 */
-	public abstract String getName();
 	
 	/**
 	 * この檻で管理している動物のオブジェクトをリストで取得
@@ -73,5 +74,19 @@ public abstract class Cage {
 	 */
 	public void setCd(int cd) {
 		this.cd = cd;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	/**
+	 * 
+	 */
+	public String getName() {
+		return name;
 	}
 }

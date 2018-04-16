@@ -1,9 +1,7 @@
 package jp.co.alpha.zoo.cage;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import jp.co.alpha.zoo.db.DBAccess;
 
@@ -17,35 +15,40 @@ public class CageFactory {
 	private static final CageFactory INSTANCE = new CageFactory();
 
 	/**
-	 * 檻の名前とオブジェクトの管理マップ
+	 * 檻の管理リスト
 	 */
-	private final Map<String, Cage> cageMap;
+	private final List<Cage> cageList;
 
 	/**
 	 * コンストラクタ
 	 */
 	private CageFactory() {
-		// DBより檻の一覧を取得し、管理マップへ格納
-		cageMap = DBAccess.INSTANCE.getCages();
+		cageList = DBAccess.INSTANCE.getCages();
 	}
 
 	/**
 	 * 指定の名前の檻を取得
 	 * 
-	 * @param cageName
+	 * @param cd
 	 * @return
 	 */
-	public static Cage getCage(String cageName) {
-		return INSTANCE.cageMap.get(cageName);
+	public static Cage getCage(int cd) {
+		Cage targetCage = null;
+		for (Cage cage : INSTANCE.cageList) {
+			if (cage.getCd() == cd) {
+				targetCage = cage;
+				break;
+			}
+		}
+		return targetCage;
 	}
 
 	/**
-	 * 管理している檻の名前をリストで取得
+	 * 管理している檻オブジェクトをリストで取得
 	 * 
 	 * @return
 	 */
-	public static List<String> getCageNames() {
-		return Collections.unmodifiableList(new ArrayList<>(INSTANCE.cageMap.keySet()));
+	public static List<Cage> getAllCages() {
+		return Collections.unmodifiableList(INSTANCE.cageList);
 	}
-
 }

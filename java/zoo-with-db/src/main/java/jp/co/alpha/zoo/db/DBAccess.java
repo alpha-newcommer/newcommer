@@ -1,5 +1,6 @@
 package jp.co.alpha.zoo.db;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -14,7 +15,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import jp.co.alpha.zoo.animal.Animal;
-import jp.co.alpha.zoo.animal.AnimalImpl;
+import jp.co.alpha.zoo.animal.AnimalFactory;
+import jp.co.alpha.zoo.animal.AnimalType;
 import jp.co.alpha.zoo.cage.Cage;
 import jp.co.alpha.zoo.exception.SystemException;
 
@@ -24,9 +26,9 @@ public class DBAccess {
 	 */
 	public static final DBAccess INSTANCE = new DBAccess();
 
-	private static final String DB_CONNECTION_STR = "jdbc:postgresql://192.168.0.103:5432/alpha";
+	private static final String DB_CONNECTION_STR = "jdbc:postgresql://localhost:5432/alpha";
 	private static final String DB_USR = "postgres";
-	private static final String DB_PASS = "p0stgres";
+	private static final String DB_PASS = "postgres";
 
 	/**
 	 * コンストラクタ
@@ -44,8 +46,8 @@ public class DBAccess {
 	 * マスタより檻の名前とCageオブジェクトのマップ取得
 	 * @return
 	 */
-	public Map<String, Cage> getCages() {
-		Map<String, Cage> cageMap = new LinkedHashMap<>();
+	public List<Cage> getCages() {
+		List<Cage> cageList = new ArrayList<>();
 		String query = "SELECT cd, name, type FROM m_cage;";
 		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
 				Statement stm = conn.createStatement();
@@ -53,35 +55,41 @@ public class DBAccess {
 			while (rslt.next()) {
 				String name = rslt.getString("name");
 				String type = rslt.getString("type");
-				Cage cage = (Cage) Class.forName(type).newInstance();
+				Cage cage = (Cage) Class.forName(type).getConstructor(String.class).newInstance(name);
 				cage.setCd(rslt.getInt("cd"));
-				cageMap.put(name, cage);
+				cageList.add(cage);
 			}
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new SystemException("檻マスタデータ取得に失敗しました。", e);
 		}
 
-		return Collections.unmodifiableMap(cageMap);
+		return Collections.unmodifiableList(cageList);
 	}
 
 	/**
 	 * マスタより動物名 のリストを取得
 	 * @return
 	 */
-	public List<String> getAnimalNames() {
-		List<String> animalNameList = new ArrayList<>();
-		String query = "SELECT name FROM m_animal;";
+	public List<AnimalType> getAnimalTypeList() {
+		List<AnimalType> animalTypeList = new ArrayList<>();
+		String query = "SELECT cd, name, type FROM m_animal;";
 		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
 				Statement stm = conn.createStatement();
 				ResultSet rslt = stm.executeQuery(query);) {
 			while (rslt.next()) {
-				animalNameList.add(rslt.getString("name"));
+				int cd = rslt.getInt("cd");
+				String name = rslt.getString("name");
+				String type = rslt.getString("type");
+				@SuppressWarnings("unchecked")
+				Class<? extends Animal> animalClass  = (Class<? extends Animal>) Class.forName(type);
+				animalTypeList.add(new AnimalType(cd, name, animalClass));
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			throw new SystemException("動物マスタデータ取得に失敗しました。", e);
 		}
 
-		return Collections.unmodifiableList(animalNameList);
+		return Collections.unmodifiableList(animalTypeList);
 	}
 	
 	/**
@@ -90,20 +98,18 @@ public class DBAccess {
 	 * @return
 	 */
 	public Animal getAnimal(int id) {
-		AnimalImpl animal = null;
+		Animal animal = null;
 		
 		StringBuilder query = new StringBuilder();
-		query.append("SELECT id, cage_cd, weight, name FROM t_cage_animal ");
+		query.append("SELECT id, cage_cd, animal_cd, weight FROM t_cage_animal ");
 		query.append("WHERE id=").append(id).append(";");
 		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
 				Statement stm = conn.createStatement();
 				ResultSet rslt = stm.executeQuery(query.toString());) {
 			if (rslt.next()) {
-				animal = new AnimalImpl();
-				animal.setId(rslt.getInt("id"));
-				animal.setCageCd(rslt.getInt("cage_cd"));
-				animal.setName(rslt.getString("name"));
-				animal.setWeight(rslt.getInt("weight"));
+				int animalCd = rslt.getInt("animal_cd");
+				int weight = rslt.getInt("weight");
+				animal = AnimalFactory.createAnimal(id, animalCd, weight);
 			}
 		} catch (SQLException e) {
 			throw new SystemException("動物マスタデータ取得に失敗しました。", e);
@@ -114,15 +120,17 @@ public class DBAccess {
 	
 	/**
 	 * 動物を檻に格納する。
-	 * @param animal
+	 * 
 	 * @param cage
+	 * @param animalCd
+	 * @param weight
 	 */
-	public void addAnimalToCage(Animal animal, Cage cage) {
+	public void addAnimalToCage(Cage cage, int animalCd, int weight) {
 		StringBuilder query = new StringBuilder();
-		query.append("INSERT INTO t_cage_animal(cage_cd, weight, name) VALUES (");
+		query.append("INSERT INTO t_cage_animal(cage_cd, animal_cd, weight) VALUES (");
 		query.append(cage.getCd()).append(",");
-		query.append(animal.getWeight()).append(",");
-		query.append("'").append(animal.getName()).append("'");
+		query.append(animalCd).append(",");
+		query.append(weight);
 		query.append(");");
 		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
 				Statement stm = conn.createStatement();) {
@@ -140,18 +148,17 @@ public class DBAccess {
 	public List<Animal> getAnimals(Cage cage) {
 		List<Animal> animalList = new ArrayList<>();
 		StringBuilder query = new StringBuilder();
-		query.append("SELECT id, cage_cd, weight, name FROM t_cage_animal WHERE ");
+		query.append("SELECT id, cage_cd, animal_cd, weight FROM t_cage_animal WHERE ");
 		query.append("cage_cd=").append(cage.getCd()).append(";");
 		
 		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
 				Statement stm = conn.createStatement();
 				ResultSet rslt = stm.executeQuery(query.toString());) {
 			while (rslt.next()) {
-				AnimalImpl animal = new AnimalImpl();
-				animal.setId(rslt.getInt("id"));
-				animal.setCageCd(rslt.getInt("cage_cd"));
-				animal.setName(rslt.getString("name"));
-				animal.setWeight(rslt.getInt("weight"));
+				int id = rslt.getInt("id");
+				int animalCd = rslt.getInt("animal_cd");
+				int weight = rslt.getInt("weight");
+				Animal animal = AnimalFactory.createAnimal(id, animalCd, weight);
 				animalList.add(animal);
 			}
 		} catch (SQLException e) {
@@ -196,11 +203,10 @@ public class DBAccess {
 				ResultSet rslt = stm.executeQuery(query.toString());) {
 			while (rslt.next()) {
 				String ribbonName = rslt.getString("ribbon_name");
-				AnimalImpl animal = new AnimalImpl();
-				animal.setId(rslt.getInt("animal_id"));
-				animal.setCageCd(rslt.getInt("cage_cd"));
-				animal.setName(rslt.getString("name"));
-				animal.setWeight(rslt.getInt("weight"));
+				int id = rslt.getInt("id");
+				int animalCd = rslt.getInt("animal_cd");
+				int weight = rslt.getInt("weight");
+				Animal animal = AnimalFactory.createAnimal(id, animalCd, weight);
 				ribbonMap.put(ribbonName, animal);
 			}
 		} catch (SQLException e) {

@@ -4,13 +4,10 @@ import jp.co.alpha.zoo.animal.Animal;
 import jp.co.alpha.zoo.exception.BusinessException;
 
 public class HardyCage extends Cage {
-	private static final String NAME = "頑丈な檻";
-
-	@Override
-	public String getName() {
-		return NAME;
+	public HardyCage(String name) {
+		super(name);
 	}
-	
+
 	@Override
 	void check(Animal animal) throws BusinessException {
 		int num = getAllAnimals().size() + 1;

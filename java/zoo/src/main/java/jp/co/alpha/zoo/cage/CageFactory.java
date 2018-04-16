@@ -14,7 +14,7 @@ public class CageFactory {
 	private static final CageFactory INSTANCE = new CageFactory();
 
 	/**
-	 * 檻の名前とオブジェクトの管理リスト
+	 * 檻の管理リスト
 	 */
 	private final List<Cage> cageList;
 
@@ -23,10 +23,10 @@ public class CageFactory {
 	 */
 	private CageFactory() {
 		cageList = new ArrayList<>();
-		cageList.add(new NormalCage());
-		cageList.add(new CuteCage());
-		cageList.add(new HardyCage());
-		cageList.add(new LargeCage());
+		cageList.add(new NormalCage("普通の檻"));
+		cageList.add(new CuteCage("可愛い檻"));
+		cageList.add(new HardyCage("頑丈な檻"));
+		cageList.add(new LargeCage("広い檻"));
 		// コード割振り
 		int id = 1;
 		for (Cage cage : cageList) {

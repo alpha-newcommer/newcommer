@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import jp.co.alpha.zoo.animal.Animal;
 import jp.co.alpha.zoo.animal.AnimalFactory;
+import jp.co.alpha.zoo.animal.AnimalType;
 import jp.co.alpha.zoo.cage.Cage;
 import jp.co.alpha.zoo.cage.CageFactory;
-import jp.co.alpha.zoo.db.DBAccess;
 import jp.co.alpha.zoo.exception.BusinessException;
 import jp.co.alpha.zoo.exception.SystemException;
 import jp.co.alpha.zoo.ribbon.RibbonManager;
@@ -100,25 +100,24 @@ public class App {
 	 * @throws IOException
 	 */
 	private void putAnimal(BufferedReader in) throws IOException {
-		int cmdId = 0;
-
 		// 檻の選択
 		Map<Integer, String> menuMap = new LinkedHashMap<>();
-		List<String> cageNames = CageFactory.getCageNames();
-		for (int i = 0; i < cageNames.size(); i++) {
-			menuMap.put(i + 1, cageNames.get(i));
+		List<Cage> cageList = CageFactory.getAllCages();
+		for (Cage cage: cageList) {
+			menuMap.put(cage.getCd(), cage.getName());
 		}
-		cmdId = getCommand(menuMap, in, "ケージ番号選択", "入力誤り。ケージ番号を入力してください。");
-		Cage cage = CageFactory.getCage(cageNames.get(cmdId - 1));
+		int cmdId = getCommand(menuMap, in, "ケージ番号選択", "入力誤り。ケージ番号を入力してください。");
+		Cage cage = CageFactory.getCage(cmdId);
 
 		// 動物の選択
 		menuMap.clear();
-		List<String> animalNames = AnimalFactory.getAnimalNames();
-		for (int i = 0; i < animalNames.size(); i++) {
-			menuMap.put(i + 1, animalNames.get(i));
+		List<AnimalType> animalTypeList = AnimalFactory.getAnimalTypeList();
+		for (AnimalType animalType : animalTypeList) {
+			menuMap.put(animalType.getCd(), animalType.getName());
 		}
 		cmdId = getCommand(menuMap, in, "動物の番号選択", "入力誤り。動物の番号を入力してください。");
-		String animalName = animalNames.get(cmdId - 1);
+		int animalCd = cmdId;
+		String animalName = menuMap.get(cmdId);
 
 		// 動物の体重を入力するまでループ
 		String cmd = null;
@@ -133,11 +132,11 @@ public class App {
 		int weight = Integer.parseInt(cmd);
 
 		// 動物名と体重から動物オブジェクト生成
-		Animal animal = AnimalFactory.createAnimal(animalName, weight);
+		Animal animal = AnimalFactory.createAnimal(0, animalCd, weight);
 
 		// ケージに動物を入れる
 		try {
-			cage.in(animal);
+			cage.in(animalCd, animal);
 		} catch (BusinessException e) {
 			System.err.println(e.getMessage());
 		}
@@ -186,9 +185,22 @@ public class App {
 	 * 全動物リスト表示
 	 */
 	private void printAllAnimals() {
-		List<String> infList = DBAccess.INSTANCE.getAllAnimalInfList();
-		for (String inf : infList) {
-			System.out.println(inf);
+		Map<String, Animal> ribbonMap = RibbonManager.getRibbonMap();
+		for (Cage cage : CageFactory.getAllCages()) {
+			for (Animal animal : cage.getAllAnimals()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(cage.getName()).append("\t");
+				sb.append(animal.getId()).append("\t");
+				sb.append(animal.getName()).append("\t");
+				sb.append(animal.getWeight()).append("\t");
+				// リボン付きの場合はリボン名も表示
+				for (Entry<String, Animal> entry : ribbonMap.entrySet()) {
+					if ((entry.getValue() != null) && entry.getValue().equals(animal)) {
+						sb.append(entry.getKey());
+					}
+				}
+				System.out.println(sb.toString());
+			}
 		}
 	}
 

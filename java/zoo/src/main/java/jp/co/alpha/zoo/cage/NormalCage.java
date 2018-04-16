@@ -6,13 +6,11 @@ import jp.co.alpha.zoo.animal.Animal;
 import jp.co.alpha.zoo.exception.BusinessException;
 
 public class NormalCage extends Cage {
-	private static final String NAME = "普通の檻";
-
-	@Override
-	public String getName() {
-		return NAME;
-	}
 	
+	protected NormalCage(String name) {
+		super(name);
+	}
+
 	@Override
 	public void check(Animal animal) throws BusinessException {
 		List<Animal> animalList = getAllAnimals();
