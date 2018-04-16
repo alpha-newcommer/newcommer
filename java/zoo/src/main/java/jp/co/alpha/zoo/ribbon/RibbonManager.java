@@ -17,7 +17,12 @@ public class RibbonManager {
 	 * インスタンス
 	 */
 	private static final RibbonManager INSTANCE = new RibbonManager();
-
+	
+	/**
+	 * リボン種管理リスト
+	 */
+	private final List<RibbonType> ribbonTypeList;
+	
 	/**
 	 * リボンと動物のマッピング
 	 */
@@ -27,12 +32,13 @@ public class RibbonManager {
 	 * コンストラクタ
 	 */
 	private RibbonManager() {
+		ribbonTypeList = new ArrayList<>();
+		ribbonTypeList.add(new RibbonType(1, "草食アイドルリボン"));
+		ribbonTypeList.add(new RibbonType(2, "肉食系女子リボン"));
+		ribbonTypeList.add(new RibbonType(3, "空の王者風リボン"));
+		ribbonTypeList.add(new RibbonType(4, "ふわふわ代表リボン"));
+		ribbonTypeList.add(new RibbonType(5, "お触られマスターリボン"));
 		ribbonMap = new HashMap<>();
-		ribbonMap.put("草食アイドルリボン", null);
-		ribbonMap.put("肉食系女子リボン", null);
-		ribbonMap.put("空の王者風リボン", null);
-		ribbonMap.put("ふわふわ代表リボン", null);
-		ribbonMap.put("お触られマスターリボン", null);
 	}
 
 	/**
@@ -41,9 +47,16 @@ public class RibbonManager {
 	 * @param animal
 	 * @throws BusinessException
 	 */
-	public static void setRibbon(String ribbonName, Animal animal) throws BusinessException {
-		if (!INSTANCE.ribbonMap.containsKey(ribbonName)) {
-			throw new BusinessException("未定義のリボン名が指定されました。リボン名：" + ribbonName);
+	public static void setRibbon(int cd, Animal animal) throws BusinessException {
+		String ribbonName = null;
+		for (RibbonType type : INSTANCE.ribbonTypeList) {
+			if (type.getCd() == cd) {
+				ribbonName = type.getName();
+				break;
+			}
+		}
+		if (ribbonName == null) {
+			throw new BusinessException("未定義のリボンコードが指定されました。リボンコード：" + cd);
 		}
 		INSTANCE.ribbonMap.put(ribbonName, animal);
 	}
@@ -52,8 +65,8 @@ public class RibbonManager {
 	 * リボン名のリスト取得
 	 * @return
 	 */
-	public static List<String> getRibbonNames() {
-		return new ArrayList<>(INSTANCE.ribbonMap.keySet());
+	public static List<RibbonType> getRibbonTypes() {
+		return Collections.unmodifiableList(INSTANCE.ribbonTypeList);
 	}
 	
 	/**

@@ -20,6 +20,7 @@ import jp.co.alpha.zoo.cage.CageFactory;
 import jp.co.alpha.zoo.exception.BusinessException;
 import jp.co.alpha.zoo.exception.SystemException;
 import jp.co.alpha.zoo.ribbon.RibbonManager;
+import jp.co.alpha.zoo.ribbon.RibbonType;
 
 /**
  * メインクラス
@@ -151,12 +152,11 @@ public class App {
 	private void setRibbon(BufferedReader in) throws IOException {
 		// リボンの選択
 		Map<Integer, String> menuMap = new LinkedHashMap<>();
-		List<String> ribbonNames = RibbonManager.getRibbonNames();
-		for (int i = 0; i < ribbonNames.size(); i++) {
-			menuMap.put(i + 1, ribbonNames.get(i));
+		List<RibbonType> ribbonTypeList = RibbonManager.getRibbonTypes();
+		for (RibbonType type : ribbonTypeList) {
+			menuMap.put(type.getCd(), type.getName());
 		}
-		int cmdId = getCommand(menuMap, in, "リボン番号選択", "入力誤り。リボン番号を入力してください。");
-		String targetRibbonName = menuMap.get(cmdId);
+		int robbonCd = getCommand(menuMap, in, "リボン番号選択", "入力誤り。リボン番号を入力してください。");
 		
 		// 対象の動物を選択するまでループ
 		Animal targetAnimal = null;
@@ -175,7 +175,7 @@ public class App {
 
 		try {
 			// 動物にリボン設定
-			RibbonManager.setRibbon(targetRibbonName, targetAnimal);
+			RibbonManager.setRibbon(robbonCd, targetAnimal);
 		} catch (BusinessException e) {
 			System.err.println(e.getMessage());
 		}

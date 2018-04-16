@@ -17,9 +17,11 @@ import jp.co.alpha.zoo.animal.AnimalFactory;
 import jp.co.alpha.zoo.animal.AnimalType;
 import jp.co.alpha.zoo.cage.Cage;
 import jp.co.alpha.zoo.cage.CageFactory;
+import jp.co.alpha.zoo.db.DBAccess;
 import jp.co.alpha.zoo.exception.BusinessException;
 import jp.co.alpha.zoo.exception.SystemException;
 import jp.co.alpha.zoo.ribbon.RibbonManager;
+import jp.co.alpha.zoo.ribbon.RibbonType;
 
 /**
  * メインクラス
@@ -151,12 +153,11 @@ public class App {
 	private void setRibbon(BufferedReader in) throws IOException {
 		// リボンの選択
 		Map<Integer, String> menuMap = new LinkedHashMap<>();
-		List<String> ribbonNames = RibbonManager.getRibbonNames();
-		for (int i = 0; i < ribbonNames.size(); i++) {
-			menuMap.put(i + 1, ribbonNames.get(i));
+		List<RibbonType> ribbonTypeList = RibbonManager.getRibbonTypes();
+		for (RibbonType type : ribbonTypeList) {
+			menuMap.put(type.getCd(), type.getName());
 		}
-		int cmdId = getCommand(menuMap, in, "リボン番号選択", "入力誤り。リボン番号を入力してください。");
-		String targetRibbonName = menuMap.get(cmdId);
+		int robbonCd = getCommand(menuMap, in, "リボン番号選択", "入力誤り。リボン番号を入力してください。");
 		
 		// 対象の動物を選択するまでループ
 		Animal targetAnimal = null;
@@ -175,7 +176,7 @@ public class App {
 
 		try {
 			// 動物にリボン設定
-			RibbonManager.setRibbon(targetRibbonName, targetAnimal);
+			RibbonManager.setRibbon(robbonCd, targetAnimal);
 		} catch (BusinessException e) {
 			System.err.println(e.getMessage());
 		}
@@ -185,22 +186,9 @@ public class App {
 	 * 全動物リスト表示
 	 */
 	private void printAllAnimals() {
-		Map<String, Animal> ribbonMap = RibbonManager.getRibbonMap();
-		for (Cage cage : CageFactory.getAllCages()) {
-			for (Animal animal : cage.getAllAnimals()) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(cage.getName()).append("\t");
-				sb.append(animal.getId()).append("\t");
-				sb.append(animal.getName()).append("\t");
-				sb.append(animal.getWeight()).append("\t");
-				// リボン付きの場合はリボン名も表示
-				for (Entry<String, Animal> entry : ribbonMap.entrySet()) {
-					if ((entry.getValue() != null) && entry.getValue().equals(animal)) {
-						sb.append(entry.getKey());
-					}
-				}
-				System.out.println(sb.toString());
-			}
+		List<String> allAnimalInfList = DBAccess.INSTANCE.getAllAnimalInfList(); 
+		for (String inf : allAnimalInfList) {
+			System.out.println(inf);
 		}
 	}
 
@@ -208,15 +196,15 @@ public class App {
 	 * リボン付き動物リスト表示
 	 */
 	private void printRibbonAnimals() {
-		Map<String, Animal> ribbonMap = RibbonManager.getRibbonMap();
+		Map<RibbonType, Animal> ribbonMap = RibbonManager.getRibbonMap();
 		int id = 1;
-		for (Entry<String, Animal> entry : ribbonMap.entrySet()) {
+		for (Entry<RibbonType, Animal> entry : ribbonMap.entrySet()) {
 			if (entry.getValue() == null) {
 				continue;
 			}
 			StringBuilder sb = new StringBuilder();
 			sb.append(id).append("\t");
-			sb.append(entry.getKey()).append("\t");
+			sb.append(entry.getKey().getName()).append("\t");
 			sb.append(entry.getValue().getId()).append("\t");
 			sb.append(entry.getValue().getName()).append("\t");
 			sb.append(entry.getValue().getWeight());

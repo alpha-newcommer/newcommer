@@ -1,12 +1,11 @@
 package jp.co.alpha.zoo.ribbon;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import jp.co.alpha.zoo.animal.Animal;
+import jp.co.alpha.zoo.db.DBAccess;
 import jp.co.alpha.zoo.exception.BusinessException;
 
 /**
@@ -17,22 +16,17 @@ public class RibbonManager {
 	 * インスタンス
 	 */
 	private static final RibbonManager INSTANCE = new RibbonManager();
-
+	
 	/**
-	 * リボンと動物のマッピング
+	 * リボン種管理リスト
 	 */
-	private final Map<String, Animal> ribbonMap;
+	private final List<RibbonType> ribbonTypeList;
 
 	/**
 	 * コンストラクタ
 	 */
 	private RibbonManager() {
-		ribbonMap = new HashMap<>();
-		ribbonMap.put("草食アイドルリボン", null);
-		ribbonMap.put("肉食系女子リボン", null);
-		ribbonMap.put("空の王者風リボン", null);
-		ribbonMap.put("ふわふわ代表リボン", null);
-		ribbonMap.put("お触られマスターリボン", null);
+		ribbonTypeList = DBAccess.INSTANCE.getRibbonTypes();
 	}
 
 	/**
@@ -41,26 +35,39 @@ public class RibbonManager {
 	 * @param animal
 	 * @throws BusinessException
 	 */
-	public static void setRibbon(String ribbonName, Animal animal) throws BusinessException {
-		if (!INSTANCE.ribbonMap.containsKey(ribbonName)) {
-			throw new BusinessException("未定義のリボン名が指定されました。リボン名：" + ribbonName);
+	public static void setRibbon(int cd, Animal animal) throws BusinessException {
+		RibbonType type = getRibbonType(cd);
+		if (type == null) {
+			throw new BusinessException("未定義のリボンコードが指定されました。リボンコード：" + cd);
 		}
-		INSTANCE.ribbonMap.put(ribbonName, animal);
+		DBAccess.INSTANCE.setRibbon(cd, animal);
 	}
 	
 	/**
 	 * リボン名のリスト取得
 	 * @return
 	 */
-	public static List<String> getRibbonNames() {
-		return new ArrayList<>(INSTANCE.ribbonMap.keySet());
+	public static List<RibbonType> getRibbonTypes() {
+		return Collections.unmodifiableList(INSTANCE.ribbonTypeList);
 	}
 	
 	/**
 	 * リボンと動物のマッピングを取得
 	 * @return
 	 */
-	public static Map<String, Animal> getRibbonMap() {
-		return Collections.unmodifiableMap(INSTANCE.ribbonMap);
+	public static Map<RibbonType, Animal> getRibbonMap() {
+		return DBAccess.INSTANCE.getRibbonMap();
+	}
+	
+	public static RibbonType getRibbonType(int cd) {
+		RibbonType targetType = null;
+		for (RibbonType type : INSTANCE.ribbonTypeList) {
+			if (type.getCd() == cd) {
+				targetType = type;
+				break;
+			}
+		}
+		
+		return targetType;
 	}
 }

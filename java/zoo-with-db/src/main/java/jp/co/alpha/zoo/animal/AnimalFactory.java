@@ -34,7 +34,7 @@ public class AnimalFactory {
 	 * @param weight
 	 * @return
 	 */
-	public static Animal createAnimal(int cd, int id, int weight) {
+	public static Animal createAnimal(int id, int cd, int weight) {
 		Animal animal = null;
 		try {
 			for (AnimalType animalType: INSTANCE.animalTypeList) {
