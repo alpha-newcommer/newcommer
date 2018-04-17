@@ -1,0 +1,26 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Hello Application</display-name>
+  
+  <servlet>
+    <servlet-name>helloServlet</servlet-name>
+    <servlet-class>jp.co.alpha.handson.servlet.HelloServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ｃounterServlet</servlet-name>
+    <servlet-class>jp.co.alpha.handson.servlet.CounterServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>helloServlet</servlet-name>
+    <url-pattern>/hello/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ｃounterServlet</servlet-name>
+    <url-pattern>/counter/*</url-pattern>
+  </servlet-mapping>
+  
+</web-app>

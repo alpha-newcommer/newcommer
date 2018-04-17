@@ -6,22 +6,13 @@ public class App {
 		Ledger ledger = new Ledger();
 
 		// たろーさんの毎月の支払設定
-		Payment monthlyPayment = new Payment();
-		monthlyPayment.setName("たろぉ");
-		monthlyPayment.setValue(100);
-		Paymenter paymenter1 = new Paymenter(ledger, monthlyPayment);
+		Paymenter paymenter1 = new Paymenter(ledger, "たろぉ", 100);
 
 		// こてつさんの毎月の支払設定
-		monthlyPayment = new Payment();
-		monthlyPayment.setName("こてっ");
-		monthlyPayment.setValue(50);
-		Paymenter paymenter2 = new Paymenter(ledger, monthlyPayment);
+		Paymenter paymenter2 = new Paymenter(ledger, "こてっ", 50);
 
 		// こじろおさんの毎月の支払設定
-		monthlyPayment = new Payment();
-		monthlyPayment.setName("こじろぅ");
-		monthlyPayment.setValue(20);
-		Paymenter paymenter3 = new Paymenter(ledger, monthlyPayment);
+		Paymenter paymenter3 = new Paymenter(ledger, "こじろぅ", 20);
 		
 		// お支払い開始
 		paymenter1.start();
