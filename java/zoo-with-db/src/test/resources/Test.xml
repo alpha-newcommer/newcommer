@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<m_cage 
+		cd="1"
+		name="かーわいぃ檻"
+		type="jp.co.alpha.zoo.cage.CuteCage"
+	/>
+	<m_cage 
+		cd="2"
+		name="ひろーーい檻"
+		type="jp.co.alpha.zoo.cage.LargeCage"
+	/>
+</dataset>

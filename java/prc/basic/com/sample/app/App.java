@@ -16,14 +16,18 @@ public class App {
 		}
 		else {
 			System.out.println("はろー だいきょー" + args[0]);
-			
+			String path = null;
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 				System.out.print("パス＞");
-				String path = reader.readLine();
+				path = reader.readLine();
+			} catch (IOException ie){
+				ie.printStackTrace();
+				return;
+			}
 				
-				BufferedReader br = new BufferedReader(new FileReader(path));
-				String buf;
+			try(BufferedReader br = new BufferedReader(new FileReader(path));) {
+				String buf = null;
 				while((buf = br.readLine()) != null) {
 					System.out.println(buf);
 				}
