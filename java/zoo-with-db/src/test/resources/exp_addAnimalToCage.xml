@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <t_cage_animal 
+        id="2"
+        cage_cd="2"
+        animal_cd="1"
+        weight="2"
+    />
+    
+</dataset>

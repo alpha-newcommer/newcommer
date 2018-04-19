@@ -228,7 +228,7 @@ public class DBAccess {
 	public Map<RibbonType, Animal> getRibbonMap() {
 		Map<RibbonType, Animal> ribbonMap = new LinkedHashMap<>();
 		StringBuilder query = new StringBuilder();
-		query.append("SELECT t1.id, t1.ribbon_cd, t1.animal_id, t2.animal_cd, t2.weight ");
+		query.append("SELECT t1.ribbon_cd, t1.animal_id, t2.animal_cd, t2.weight ");
 		query.append("FROM t_ribbon_animal t1 ");
 		query.append("JOIN t_cage_animal t2 ON t1.animal_id = t2.id ");
 		try (Connection conn = DriverManager.getConnection(DB_CONNECTION_STR, DB_USR, DB_PASS);
