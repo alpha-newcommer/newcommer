@@ -23,13 +23,16 @@ public class CounterServlet extends HttpServlet {
 		int cnt = counter;
 		cnt++;
 
-		res.setContentType("text/html; charset=UTF-8");
-		PrintWriter writer = res.getWriter();
-		
-		writer.println("<HTML><BODY>");
-		writer.print("<H1>キミは" + counter + "人目の訪問者だ</H1>");
-		writer.println("</BODY></HTML>");
-		
+		res.setContentType("text/html; charset=SJIS");
+		try {
+			PrintWriter writer = res.getWriter();
+			writer.println("<HTML><BODY>");
+			writer.print("<H1>キミは" + counter + "人目の訪問者だ</H1>");
+			writer.println("</BODY></HTML>");
+			writer.flush();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		// ちょっと時間かかる。
 		Random rand = new Random();
 		try {
