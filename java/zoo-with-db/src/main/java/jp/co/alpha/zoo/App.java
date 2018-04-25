@@ -102,18 +102,21 @@ public class App {
 	 * @throws IOException
 	 */
 	private void putAnimal(BufferedReader in) throws IOException {
+		CageFactory cf = CageFactory.getInstance();
+		AnimalFactory af = AnimalFactory.getInstance();
+		
 		// 檻の選択
 		Map<Integer, String> menuMap = new LinkedHashMap<>();
-		List<Cage> cageList = CageFactory.getAllCages();
+		List<Cage> cageList = cf.getAllCages();
 		for (Cage cage: cageList) {
 			menuMap.put(cage.getCd(), cage.getName());
 		}
 		int cmdId = getCommand(menuMap, in, "ケージ番号選択", "入力誤り。ケージ番号を入力してください。");
-		Cage cage = CageFactory.getCage(cmdId);
+		Cage cage = cf.getCage(cmdId);
 
 		// 動物の選択
 		menuMap.clear();
-		List<AnimalType> animalTypeList = AnimalFactory.getAnimalTypeList();
+		List<AnimalType> animalTypeList = af.getAnimalTypeList();
 		for (AnimalType animalType : animalTypeList) {
 			menuMap.put(animalType.getCd(), animalType.getName());
 		}
@@ -134,7 +137,7 @@ public class App {
 		int weight = Integer.parseInt(cmd);
 
 		// 動物名と体重から動物オブジェクト生成
-		Animal animal = AnimalFactory.createAnimal(0, animalCd, weight);
+		Animal animal = af.createAnimal(0, animalCd, weight);
 
 		// ケージに動物を入れる
 		try {
@@ -151,9 +154,12 @@ public class App {
 	 * @throws IOException
 	 */
 	private void setRibbon(BufferedReader in) throws IOException {
+		AnimalFactory af = AnimalFactory.getInstance();
+		RibbonManager rm = RibbonManager.getInstance();
+		
 		// リボンの選択
 		Map<Integer, String> menuMap = new LinkedHashMap<>();
-		List<RibbonType> ribbonTypeList = RibbonManager.getRibbonTypes();
+		List<RibbonType> ribbonTypeList = rm.getRibbonTypes();
 		for (RibbonType type : ribbonTypeList) {
 			menuMap.put(type.getCd(), type.getName());
 		}
@@ -166,7 +172,7 @@ public class App {
 			System.out.print("リボンを贈呈する動物の個体識別IDを入力＞");
 			cmd = in.readLine();
 			if (StringUtils.isNumeric(cmd)) {
-				targetAnimal = AnimalFactory.getAnimal(Integer.parseInt(cmd));
+				targetAnimal = af.getAnimal(Integer.parseInt(cmd));
 			}
 			if (targetAnimal != null) {
 				break;
@@ -176,7 +182,7 @@ public class App {
 
 		try {
 			// 動物にリボン設定
-			RibbonManager.setRibbon(robbonCd, targetAnimal);
+			rm.setRibbon(robbonCd, targetAnimal);
 		} catch (BusinessException e) {
 			System.err.println(e.getMessage());
 		}
@@ -186,7 +192,9 @@ public class App {
 	 * 全動物リスト表示
 	 */
 	private void printAllAnimals() {
-		List<String> allAnimalInfList = DBAccess.INSTANCE.getAllAnimalInfList(); 
+		DBAccess dba = DBAccess.getInstance();
+		
+		List<String> allAnimalInfList = dba.getAllAnimalInfList(); 
 		for (String inf : allAnimalInfList) {
 			System.out.println(inf);
 		}
@@ -196,7 +204,9 @@ public class App {
 	 * リボン付き動物リスト表示
 	 */
 	private void printRibbonAnimals() {
-		Map<RibbonType, Animal> ribbonMap = RibbonManager.getRibbonMap();
+		RibbonManager rm = RibbonManager.getInstance();
+		
+		Map<RibbonType, Animal> ribbonMap = rm.getRibbonMap();
 		int id = 1;
 		for (Entry<RibbonType, Animal> entry : ribbonMap.entrySet()) {
 			if (entry.getValue() == null) {

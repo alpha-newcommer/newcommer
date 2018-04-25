@@ -24,7 +24,7 @@ public class DBAccess {
 	/**
 	 * インスタンス
 	 */
-	public static final DBAccess INSTANCE = new DBAccess();
+	private static final DBAccess INSTANCE = new DBAccess();
 
 	private static final String DB_CONNECTION_STR = "jdbc:postgresql://localhost:5432/alpha";
 	private static final String DB_USR = "postgres";
@@ -40,6 +40,10 @@ public class DBAccess {
 		} catch (ClassNotFoundException e) {
 			throw new SystemException("JDBCドライバのロードに失敗しました。", e);
 		}
+	}
+	
+	public static DBAccess getInstance() {
+		return INSTANCE;
 	}
 
 	/**
@@ -98,6 +102,7 @@ public class DBAccess {
 	 * @return
 	 */
 	public Animal getAnimal(int id) {
+		AnimalFactory af = AnimalFactory.getInstance();
 		Animal animal = null;
 		
 		StringBuilder query = new StringBuilder();
@@ -109,7 +114,7 @@ public class DBAccess {
 			if (rslt.next()) {
 				int animalCd = rslt.getInt("animal_cd");
 				int weight = rslt.getInt("weight");
-				animal = AnimalFactory.createAnimal(id, animalCd, weight);
+				animal = af.createAnimal(id, animalCd, weight);
 			}
 		} catch (SQLException e) {
 			throw new SystemException("動物マスタデータ取得に失敗しました。", e);
@@ -146,6 +151,8 @@ public class DBAccess {
 	 * @return
 	 */
 	public List<Animal> getAnimals(Cage cage) {
+		AnimalFactory af = AnimalFactory.getInstance();
+		
 		List<Animal> animalList = new ArrayList<>();
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT id, cage_cd, animal_cd, weight FROM t_cage_animal WHERE ");
@@ -158,7 +165,7 @@ public class DBAccess {
 				int id = rslt.getInt("id");
 				int animalCd = rslt.getInt("animal_cd");
 				int weight = rslt.getInt("weight");
-				Animal animal = AnimalFactory.createAnimal(id, animalCd, weight);
+				Animal animal = af.createAnimal(id, animalCd, weight);
 				animalList.add(animal);
 			}
 		} catch (SQLException e) {
@@ -226,7 +233,10 @@ public class DBAccess {
 	 * @return
 	 */
 	public Map<RibbonType, Animal> getRibbonMap() {
+		AnimalFactory af = AnimalFactory.getInstance();
+		RibbonManager rm = RibbonManager.getInstance();
 		Map<RibbonType, Animal> ribbonMap = new LinkedHashMap<>();
+		
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT t1.ribbon_cd, t1.animal_id, t2.animal_cd, t2.weight ");
 		query.append("FROM t_ribbon_animal t1 ");
@@ -237,7 +247,7 @@ public class DBAccess {
 			while (rslt.next()) {
 				int ribbonCd = rslt.getInt("ribbon_cd");
 				RibbonType ribbonType = null;
-				for (RibbonType type : RibbonManager.getRibbonTypes()) {
+				for (RibbonType type : rm.getRibbonTypes()) {
 					if (type.getCd() == ribbonCd) {
 						ribbonType = type;
 						break;
@@ -246,7 +256,7 @@ public class DBAccess {
 				int id = rslt.getInt("animal_id");
 				int animalCd = rslt.getInt("animal_cd");
 				int weight = rslt.getInt("weight");
-				Animal animal = AnimalFactory.createAnimal(id, animalCd, weight);
+				Animal animal = af.createAnimal(id, animalCd, weight);
 				ribbonMap.put(ribbonType, animal);
 			}
 		} catch (SQLException e) {
@@ -257,6 +267,7 @@ public class DBAccess {
 	}
 	
 	public List<String> getAllAnimalInfList() {
+		RibbonManager rm = RibbonManager.getInstance();
 		List<String> animalInfList = new ArrayList<>();
 		
 		StringBuilder query = new StringBuilder();
@@ -275,7 +286,7 @@ public class DBAccess {
 				sb.append(rslt.getString("animal_name")).append("\t");
 				sb.append(rslt.getInt("weight")).append("\t");
 				int ribbonCd = rslt.getInt("ribbon_cd");
-				RibbonType ribbonType = RibbonManager.getRibbonType(ribbonCd);
+				RibbonType ribbonType = rm.getRibbonType(ribbonCd);
 				if (ribbonType != null) {
 					sb.append(ribbonType.getName());
 				}

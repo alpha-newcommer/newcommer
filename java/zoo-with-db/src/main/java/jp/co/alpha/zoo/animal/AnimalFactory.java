@@ -24,9 +24,14 @@ public class AnimalFactory {
 	 * コンストラクタ
 	 */
 	private AnimalFactory() {
-		animalTypeList = DBAccess.INSTANCE.getAnimalTypeList();
+		DBAccess dba = DBAccess.getInstance();
+		animalTypeList = dba.getAnimalTypeList();
 	}
 
+	public static AnimalFactory getInstance() {
+		return INSTANCE;
+	}
+	
 	/**
 	 * 指定の名前と体重の動物オブジェクトを作成して取得
 	 * 
@@ -34,10 +39,10 @@ public class AnimalFactory {
 	 * @param weight
 	 * @return
 	 */
-	public static Animal createAnimal(int id, int cd, int weight) {
+	public Animal createAnimal(int id, int cd, int weight) {
 		Animal animal = null;
 		try {
-			for (AnimalType animalType: INSTANCE.animalTypeList) {
+			for (AnimalType animalType: animalTypeList) {
 				if (animalType.getCd() == cd) {
 					animal = animalType.getType().getConstructor(Integer.class, Integer.class).newInstance(id, weight);
 					break;
@@ -56,8 +61,8 @@ public class AnimalFactory {
 	 * 
 	 * @return
 	 */
-	public static List<AnimalType> getAnimalTypeList() {
-		return Collections.unmodifiableList(INSTANCE.animalTypeList);
+	public List<AnimalType> getAnimalTypeList() {
+		return Collections.unmodifiableList(animalTypeList);
 	}
 
 	/**
@@ -65,7 +70,9 @@ public class AnimalFactory {
 	 * @param id
 	 * @return
 	 */
-	public static Animal getAnimal(int id) {
-		return DBAccess.INSTANCE.getAnimal(id);
+	public Animal getAnimal(int id) {
+		DBAccess dba = DBAccess.getInstance();
+
+		return dba.getAnimal(id);
 	}
 }

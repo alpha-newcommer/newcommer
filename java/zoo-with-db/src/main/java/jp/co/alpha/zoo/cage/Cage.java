@@ -15,7 +15,7 @@ public abstract class Cage {
 	 * コード
 	 */
 	private int cd;
-	
+
 	/**
 	 * 檻名
 	 */
@@ -27,31 +27,39 @@ public abstract class Cage {
 	protected Cage(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * この檻で管理している動物のオブジェクトをリストで取得
+	 * 
 	 * @return
 	 */
 	public List<Animal> getAllAnimals() {
-		return Collections.unmodifiableList(DBAccess.INSTANCE.getAnimals(this));
+		DBAccess dba = DBAccess.getInstance();
+		
+		return Collections.unmodifiableList(dba.getAnimals(this));
 	}
-	
+
 	/**
 	 * この檻に指定の動物を格納
+	 * 
 	 * @param animal
 	 * @throws BusinessException
 	 */
 	public void in(int animalCd, Animal animal) throws BusinessException {
+		DBAccess dba = DBAccess.getInstance();
+		
 		// 格納可能チェック
 		check(animal);
 		// 檻に動物オブジェクトを格納
-		DBAccess.INSTANCE.addAnimalToCage(this, animalCd, animal.getWeight());
+		dba.addAnimalToCage(this, animalCd, animal.getWeight());
 	}
-	
+
 	/**
 	 * 指定の動物を格納可能かを判定
+	 * 
 	 * @param animal
-	 * @throws BusinessException 格納条件を満たさない場合
+	 * @throws BusinessException
+	 *             格納条件を満たさない場合
 	 */
 	abstract void check(Animal animal) throws BusinessException;
 
@@ -63,7 +71,8 @@ public abstract class Cage {
 	}
 
 	/**
-	 * @param cd the cd to set
+	 * @param cd
+	 *            the cd to set
 	 */
 	public void setCd(int cd) {
 		this.cd = cd;
@@ -77,7 +86,8 @@ public abstract class Cage {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;

@@ -43,6 +43,10 @@ public class AnimalFactory {
 		animalMap = new HashMap<>();
 		idCounter = 1;
 	}
+	
+	public static AnimalFactory getInstance() {
+		return INSTANCE;
+	}
 
 	/**
 	 * 指定の名前と体重の動物オブジェクトを作成して取得
@@ -51,17 +55,17 @@ public class AnimalFactory {
 	 * @param weight
 	 * @return
 	 */
-	public static Animal createAnimal(int cd, int weight) {
+	public Animal createAnimal(int cd, int weight) {
 		Animal animal = null;
 		try {
-			int id = INSTANCE.idCounter++;
-			for (AnimalType animalType: INSTANCE.animalTypeList) {
+			int id = idCounter++;
+			for (AnimalType animalType: animalTypeList) {
 				if (animalType.getCd() == cd) {
 					animal = animalType.getType().getConstructor(Integer.class, Integer.class).newInstance(id, weight);
 					break;
 				}
 			}
-			INSTANCE.animalMap.put(id, animal);
+			animalMap.put(id, animal);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			throw new SystemException("存在しない動物名を指定されました。", e);
@@ -75,8 +79,8 @@ public class AnimalFactory {
 	 * 
 	 * @return
 	 */
-	public static List<AnimalType> getAnimalTypeList() {
-		return Collections.unmodifiableList(INSTANCE.animalTypeList);
+	public List<AnimalType> getAnimalTypeList() {
+		return Collections.unmodifiableList(animalTypeList);
 	}
 	
 	/**
@@ -84,7 +88,7 @@ public class AnimalFactory {
 	 * @param id
 	 * @return
 	 */
-	public static Animal getAnimal(int id) {
-		return INSTANCE.animalMap.get(id);
+	public Animal getAnimal(int id) {
+		return animalMap.get(id);
 	}
 }

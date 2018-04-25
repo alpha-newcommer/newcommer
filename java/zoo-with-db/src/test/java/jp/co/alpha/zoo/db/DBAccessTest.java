@@ -57,13 +57,15 @@ public class DBAccessTest {
 
 	@Test
 	public void test_getCages() throws Exception {
+		DBAccess dba = DBAccess.getInstance();
+		
 		// テストデータ投入
 		IDataSet dataSet = new FlatXmlDataSetBuilder().build(new File("src/test/resources/test_getCages.xml"));
 		databaseTester.setDataSet(dataSet);
 		databaseTester.setSetUpOperation(DatabaseOperation.CLEAN_INSERT);
 		databaseTester.onSetup();
 		
-		List<Cage> cageList = DBAccess.INSTANCE.getCages();
+		List<Cage> cageList = dba.getCages();
 		Cage cage = cageList.get(0);
 		assertThat(cage.getCd(), is(1));
 		assertThat(cage.getName(), is("かーわいぃ檻"));
@@ -77,6 +79,8 @@ public class DBAccessTest {
 
 	@Test
 	public void test_addAnimalToCage() throws Exception {
+		DBAccess dba = DBAccess.getInstance();
+		
 		// テストデータ投入
 		IDataSet dataSet = new FlatXmlDataSetBuilder().build(new File("src/test/resources/test_addAnimalToCage.xml"));
 		databaseTester.setDataSet(dataSet);
@@ -84,10 +88,10 @@ public class DBAccessTest {
 		databaseTester.onSetup();
 		
 		// 檻取得
-		List<Cage> cageList = DBAccess.INSTANCE.getCages();
+		List<Cage> cageList = dba.getCages();
 		
 		// テスト実施
-		DBAccess.INSTANCE.addAnimalToCage(cageList.get(1), 1, 2);
+		dba.addAnimalToCage(cageList.get(1), 1, 2);
 		
 		// 期待値データ作成
 		IDataSet expDataSet = new FlatXmlDataSetBuilder().build(new File("src/test/resources/exp_addAnimalToCage.xml"));
