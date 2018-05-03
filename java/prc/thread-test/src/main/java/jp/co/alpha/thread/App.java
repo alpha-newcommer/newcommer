@@ -15,15 +15,18 @@ public class App {
 		Paymenter paymenter3 = new Paymenter(ledger, "こじろぅ", 20);
 		
 		// お支払い開始
-		paymenter1.start();
-		paymenter2.start();
-		paymenter3.start();
+		Thread th1 = new Thread(paymenter1);
+		Thread th2 = new Thread(paymenter2);
+		Thread th3 = new Thread(paymenter3);
+		th1.start();
+		th2.start();
+		th3.start();
 		
 		// みんなのお支払が終わるまで待つ。
 		try {
-			paymenter3.join();
-			paymenter2.join();
-			paymenter1.join();
+			th1.join();
+			th2.join();
+			th3.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

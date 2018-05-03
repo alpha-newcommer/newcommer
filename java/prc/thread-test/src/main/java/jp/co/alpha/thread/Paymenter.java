@@ -1,6 +1,6 @@
 package jp.co.alpha.thread;
 
-public class Paymenter extends Thread {
+public class Paymenter implements Runnable {
 	private final Ledger ledger;
 	private final String name;
 	private final int value;
