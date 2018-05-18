@@ -13,6 +13,10 @@
     <servlet-name>ｃounterServlet</servlet-name>
     <servlet-class>jp.co.alpha.handson.servlet.CounterServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>scopeTestServlet</servlet-name>
+    <servlet-class>jp.co.alpha.handson.servlet.ScopeTestServlet</servlet-class>
+  </servlet>
   
   <servlet-mapping>
     <servlet-name>helloServlet</servlet-name>
@@ -21,6 +25,10 @@
   <servlet-mapping>
     <servlet-name>ｃounterServlet</servlet-name>
     <url-pattern>/counter/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>scopeTestServlet</servlet-name>
+    <url-pattern>/scope/*</url-pattern>
   </servlet-mapping>
   
 </web-app>

@@ -33,6 +33,10 @@ public class CageFactory {
 			cage.setCd(id++);
 		}
 	}
+	
+	public static CageFactory getInstance() {
+		return INSTANCE;
+	}
 
 	/**
 	 * 指定の名前の檻を取得
@@ -40,9 +44,9 @@ public class CageFactory {
 	 * @param cd
 	 * @return
 	 */
-	public static Cage getCage(int cd) {
+	public Cage getCage(int cd) {
 		Cage targetCage = null;
-		for (Cage cage : INSTANCE.cageList) {
+		for (Cage cage : cageList) {
 			if (cage.getCd() == cd) {
 				targetCage = cage;
 				break;
@@ -56,7 +60,7 @@ public class CageFactory {
 	 * 
 	 * @return
 	 */
-	public static List<Cage> getAllCages() {
-		return Collections.unmodifiableList(INSTANCE.cageList);
+	public List<Cage> getAllCages() {
+		return Collections.unmodifiableList(cageList);
 	}
 }

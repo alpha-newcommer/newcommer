@@ -23,18 +23,23 @@ public class CageFactory {
 	 * コンストラクタ
 	 */
 	private CageFactory() {
-		cageList = DBAccess.INSTANCE.getCages();
+		DBAccess dba = DBAccess.getInstance();
+		cageList = dba.getCages();
 	}
 
+	public static CageFactory getInstance() {
+		return INSTANCE;
+	}
+	
 	/**
 	 * 指定の名前の檻を取得
 	 * 
 	 * @param cd
 	 * @return
 	 */
-	public static Cage getCage(int cd) {
+	public Cage getCage(int cd) {
 		Cage targetCage = null;
-		for (Cage cage : INSTANCE.cageList) {
+		for (Cage cage : cageList) {
 			if (cage.getCd() == cd) {
 				targetCage = cage;
 				break;
@@ -48,7 +53,7 @@ public class CageFactory {
 	 * 
 	 * @return
 	 */
-	public static List<Cage> getAllCages() {
-		return Collections.unmodifiableList(INSTANCE.cageList);
+	public List<Cage> getAllCages() {
+		return Collections.unmodifiableList(cageList);
 	}
 }

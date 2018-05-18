@@ -3,7 +3,6 @@ package jp.co.alpha.thread;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 台帳クラス
@@ -19,19 +18,15 @@ public class Ledger {
 	 */
 	private final List<Payment> paymentList;
 
-	private Random rand = new Random();
-	
 	public Ledger() {
 		paymentList = Collections.synchronizedList(new ArrayList<>());
 	}
-
-	public void payment(String name, int value) throws InterruptedException {
-		payment = new Payment();
-		payment.setValue(value);
-		// ちょっと色々人によって時間がかかる。
-		Thread.sleep(rand.nextInt(5) * 100);
-		
-		payment.setName(name);
+	
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+	
+	public void recordPayment() {
 		paymentList.add(payment);
 	}
 

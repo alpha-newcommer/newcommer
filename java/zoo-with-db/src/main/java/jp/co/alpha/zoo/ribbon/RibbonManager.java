@@ -26,42 +26,52 @@ public class RibbonManager {
 	 * コンストラクタ
 	 */
 	private RibbonManager() {
-		ribbonTypeList = DBAccess.INSTANCE.getRibbonTypes();
+		DBAccess dba = DBAccess.getInstance();
+
+		ribbonTypeList = dba.getRibbonTypes();
 	}
 
+	public static RibbonManager getInstance() {
+		return INSTANCE;
+	}
+	
 	/**
 	 * リボン設定
 	 * @param ribbonName
 	 * @param animal
 	 * @throws BusinessException
 	 */
-	public static void setRibbon(int cd, Animal animal) throws BusinessException {
+	public void setRibbon(int cd, Animal animal) throws BusinessException {
+		DBAccess dba = DBAccess.getInstance();
+
 		RibbonType type = getRibbonType(cd);
 		if (type == null) {
 			throw new BusinessException("未定義のリボンコードが指定されました。リボンコード：" + cd);
 		}
-		DBAccess.INSTANCE.setRibbon(cd, animal);
+		dba.setRibbon(cd, animal);
 	}
 	
 	/**
 	 * リボン名のリスト取得
 	 * @return
 	 */
-	public static List<RibbonType> getRibbonTypes() {
-		return Collections.unmodifiableList(INSTANCE.ribbonTypeList);
+	public List<RibbonType> getRibbonTypes() {
+		return Collections.unmodifiableList(ribbonTypeList);
 	}
 	
 	/**
 	 * リボンと動物のマッピングを取得
 	 * @return
 	 */
-	public static Map<RibbonType, Animal> getRibbonMap() {
-		return DBAccess.INSTANCE.getRibbonMap();
+	public Map<RibbonType, Animal> getRibbonMap() {
+		DBAccess dba = DBAccess.getInstance();
+
+		return dba.getRibbonMap();
 	}
 	
-	public static RibbonType getRibbonType(int cd) {
+	public RibbonType getRibbonType(int cd) {
 		RibbonType targetType = null;
-		for (RibbonType type : INSTANCE.ribbonTypeList) {
+		for (RibbonType type : ribbonTypeList) {
 			if (type.getCd() == cd) {
 				targetType = type;
 				break;

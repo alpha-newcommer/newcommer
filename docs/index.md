@@ -454,7 +454,7 @@ DBはpostgresqlというものを使おう。このDB、タダなの。
 * 全データを出力
 
 ----
-### DBの単体テストをしてみよう。
+### DBの単体テストをしてみよう（１）
 DBUnitを使って、DBAccess#getCagesを対象に単体テストをしてみましょう。
 手順は以下だ。
 * DBUnitを依存関係に追加
@@ -462,3 +462,9 @@ DBUnitを使って、DBAccess#getCagesを対象に単体テストをしてみま
 * DBAccess#getCagesのテストメソッドを作成
 * こっからは一緒にやろうか
 
+----
+### DBの単体テストをしてみよう（２）
+次は、DBAccess#addAnimalToCageを対象に単体テストをしてみましょう。
+手順は以下だ。
+* DBAccess#addAnimalToCageのテストメソッドを作成
+* こっからは一緒にやろうか

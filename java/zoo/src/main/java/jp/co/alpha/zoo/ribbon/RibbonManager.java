@@ -40,6 +40,10 @@ public class RibbonManager {
 		ribbonTypeList.add(new RibbonType(5, "お触られマスターリボン"));
 		ribbonMap = new HashMap<>();
 	}
+	
+	public static RibbonManager getInstance() {
+		return INSTANCE;
+	}
 
 	/**
 	 * リボン設定
@@ -47,9 +51,9 @@ public class RibbonManager {
 	 * @param animal
 	 * @throws BusinessException
 	 */
-	public static void setRibbon(int cd, Animal animal) throws BusinessException {
+	public void setRibbon(int cd, Animal animal) throws BusinessException {
 		String ribbonName = null;
-		for (RibbonType type : INSTANCE.ribbonTypeList) {
+		for (RibbonType type : ribbonTypeList) {
 			if (type.getCd() == cd) {
 				ribbonName = type.getName();
 				break;
@@ -58,22 +62,22 @@ public class RibbonManager {
 		if (ribbonName == null) {
 			throw new BusinessException("未定義のリボンコードが指定されました。リボンコード：" + cd);
 		}
-		INSTANCE.ribbonMap.put(ribbonName, animal);
+		ribbonMap.put(ribbonName, animal);
 	}
 	
 	/**
 	 * リボン名のリスト取得
 	 * @return
 	 */
-	public static List<RibbonType> getRibbonTypes() {
-		return Collections.unmodifiableList(INSTANCE.ribbonTypeList);
+	public List<RibbonType> getRibbonTypes() {
+		return Collections.unmodifiableList(ribbonTypeList);
 	}
 	
 	/**
 	 * リボンと動物のマッピングを取得
 	 * @return
 	 */
-	public static Map<String, Animal> getRibbonMap() {
-		return Collections.unmodifiableMap(INSTANCE.ribbonMap);
+	public Map<String, Animal> getRibbonMap() {
+		return Collections.unmodifiableMap(ribbonMap);
 	}
 }
