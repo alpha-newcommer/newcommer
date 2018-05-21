@@ -1,4 +1,4 @@
-# dockerŠÂ‹«î•ñ
+# dockerç’°å¢ƒæƒ…å ±
 
 ## Postgresql
 
@@ -19,14 +19,13 @@ user:admin
 password:password
 
 ### proxy
-‚È‚º‚©Aalpha‘¤‚Ìproxy‚ğg‚Á‚Ä‚¢‚éB
-http://proxy.alpha.co.jp:8080
+ãªãœã‹ã€ç¤¾å†…ãƒ—ãƒ­ã‚­ã‚·ã‚’ä½¿ç”¨ã€‚ã€‚ã€‚
 
-### Œö®”Å
+### å…¬å¼ç‰ˆ
 
-ƒGƒ‰[‚Å“®‚©‚È‚­‚È‚éBmaster.key missing
+ã‚¨ãƒ©ãƒ¼ã§å‹•ã‹ãªããªã‚‹ã€‚master.key missing
 
-#### ’P“ÆÀsiƒoƒbƒNƒOƒ‰ƒEƒ“ƒhÀs‚Ìê‡A-d‚ğ’Ç‰Áj
+#### å˜ç‹¬å®Ÿè¡Œï¼ˆãƒãƒƒã‚¯ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰å®Ÿè¡Œã®å ´åˆã€-dã‚’è¿½åŠ ï¼‰
 ```
 docker run --name artifactory \
 -p 8081:8081 docker.bintray.io/jfrog/artifactory-oss:latest \
@@ -54,22 +53,22 @@ password:root
 
 port:8080
 user:Adomain
-password:Adomain‚Ìpassword
+password:Adomainã®password
 
-‰Šúİ’è‚ÌSecret‚ÌŒ©•û
-docker exec [jenkins‚Ìkey] cat /var/jenkins_home/secrets/initialAdminPassword
+åˆæœŸè¨­å®šã®Secretã®è¦‹æ–¹
+docker exec [jenkinsã®key] cat /var/jenkins_home/secrets/initialAdminPassword
 
 ## IRC
 
-### ’P”­Às
+### å˜ç™ºå®Ÿè¡Œ
 docker run -d --name ngirc -p 6667:6667  yrpri/ngircd
 
 
-# ‹¤’Êİ’è
+# å…±é€šè¨­å®š
 
-## docker, docker-compose ‚Ì install‚Ì—¬‚ê
+## docker, docker-compose ã® installã®æµã‚Œ
 
-### proxy İ’è(curl, yum)
+### proxy è¨­å®š(curl, yum)
   /etc/systemd/system/docker.service.d/http-proxy.conf
   /etc/systemd/system/docker.service.d/https-proxy.conf
 
@@ -80,12 +79,12 @@ Environment="HTTP_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
 Environment="HTTPS_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
 
 
-### ƒzƒXƒg‚Ö‚ÌƒAƒNƒZƒX
+### ãƒ›ã‚¹ãƒˆã¸ã®ã‚¢ã‚¯ã‚»ã‚¹
 https://npc-0011:5001/
 
-### teraterm‚Å‚ÌƒAƒNƒZƒX
+### teratermã§ã®ã‚¢ã‚¯ã‚»ã‚¹
 10.65.176.126:22
-ì¬‚µ‚½ƒ†[ƒU/ƒpƒXƒ[ƒh
+ä½œæˆã—ãŸãƒ¦ãƒ¼ã‚¶/ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰
 root/alpha-handson
 
 
@@ -94,33 +93,33 @@ proxy-user/password=proxyuser/proxy123
 proxy=http://10.65.100.100:3128
 
 http://proxyuser:proxy123@10.65.100.100:3128
-### Œã•Ğ•t‚¯iƒNƒŠ[ƒ“j
-Eƒ{ƒŠƒ…[ƒ€‚ğíœ
+### å¾Œç‰‡ä»˜ã‘ï¼ˆã‚¯ãƒªãƒ¼ãƒ³ï¼‰
+ãƒ»ãƒœãƒªãƒ¥ãƒ¼ãƒ ã‚’å‰Šé™¤
 docker volume rm $(docker volume ls -q)
 
-volumesƒtƒHƒ‹ƒ_”z‰º‚ğíœ
+volumesãƒ•ã‚©ãƒ«ãƒ€é…ä¸‹ã‚’å‰Šé™¤
 
 
-# ƒRƒ“ƒeƒi‚Ì‰Šúİ’è
+# ã‚³ãƒ³ãƒ†ãƒŠã®åˆæœŸè¨­å®š
 
 ## Jenkins
 
-### Administrator password‚Ì“ü—Í
+### Administrator passwordã®å…¥åŠ›
 
 C:\envForHandson\jenkins_home\secrets\initialAdminPassword
 
 docker exec -it [Jenkins ID] cat /var/jenkins_home/secrets/initialAdminPassword
-‚É‹LÚ‚³‚ê‚Ä‚¢‚éƒpƒXƒ[ƒh‚ğ“ü—Í‚·‚éB
+ã«è¨˜è¼‰ã•ã‚Œã¦ã„ã‚‹ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å…¥åŠ›ã™ã‚‹ã€‚
 
-### proxy‚Ìİ’è
+### proxyã®è¨­å®š
 
 proxy.alpha.co.jp:8080
 
-### plugin‚Ìw’è
+### pluginã®æŒ‡å®š
 
-•K—v‚É‰‚¶‚Äplugin‚ğ‘I‘ğ‚·‚é or
-uInstall suggested pluginv‚ğ‘I‘ğ
+å¿…è¦ã«å¿œã˜ã¦pluginã‚’é¸æŠã™ã‚‹ or
+ã€ŒInstall suggested pluginã€ã‚’é¸æŠ
 
-Adminƒ†[ƒU‚ğì¬
+Adminãƒ¦ãƒ¼ã‚¶ã‚’ä½œæˆ
 
 
