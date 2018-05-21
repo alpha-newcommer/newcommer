@@ -2,107 +2,134 @@ version: '3'
 
 services:
 
-  postgresql:
-  
-    image: docker.bintray.io/postgres:9.5.2
+  db:
+
+    # 2/26ではpostgresql 10.2
+    image: postgres:latest
     container_name: postgresql
-    networks:
-      - sonarnet
 
     ports:
-     - "5432:5432"
+      - "5432:5432"
 
     environment:
-     - POSTGRES_DB=postgres
-     - POSTGRES_USER=postgres
-     - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=p0stgres
+
+    volumes:
+      # case using windows?
+      # - database:/var/lib/postgresql/data
+      # case using linux?
+      - ./volumes/postgres/data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
 
     restart: always
-    ulimits:
-      nproc: 65535
-      nofile:
-        soft: 32000
-        hard: 40000
 
-  artifactory:
+  pgadmin4:
 
-    image: docker.bintray.io/jfrog/artifactory-oss:5.9.0
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4
+
+    ports:
+      # localhost:80でアクセス可能（イーサネットのIPで接続）
+      - "80:80"
+
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=pgadmin
+
+    volumes:
+      - ./volumes/pgadmin/data:/data chorss/docker-pgadmin4
+
+    depends_on:
+      - db
+
+  sonarqube:
+
+    # 2/26ではsonarqube 7.0
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+
+    environment:
+        - SONARQUBE_JDBC_USERNAME=postgres
+        - SONARQUBE_JDBC_PASSWORD=p0stgres
+        - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+
+    depends_on:
+      - db
+
+    volumes:
+      - ./volumes/sonarqube/data:/opt/sonarqube/data
+      # sonarqube用のdatabase作成
+      - ./volumes/sonarqube/extensions:/opt/sonarqube/extensions
+
+    restart: always
+
+  mavenRepository:
+
+    image: mattgruter/artifactory
     container_name: artifactory
 
     ports:
-     - "8081:8081"
-
-    depends_on:
-     - postgresql
-
-    links:
-     - postgresql
-
-    volumes:
-     - ./artifactory/data:/artifactory/data
-     - ./artifactory/logs:/artifactory/logs
-     - ./artifactory/backup:/artifactory/backup
+     - "8081:8080"
 
     environment:
      - DB_TYPE=postgresql
+     # default setting: DB_HOST = DB_TYPE
+     - DB_HOST=db
      - DB_USER=postgres
      - DB_PASSWORD=p0stgres
+     # must set port number(:5432)
+     - DB_URL=jdbc:postgresql://db:5432/artifactory
+
+    depends_on:
+      - db
+
+    volumes:
+     - ./volumes/artifactory/data:/opt/jfrog/artifactory/data
+     - ./volumes/artifactory/logs:/opt/jfrog/artifactory/logs
 
     restart: always
-
-    ulimits:
-      nproc: 65535
-      nofile:
-        soft: 32000
-        hard: 40000
 
   gitbucket:
 
      # 2/26ではgitbucket 4
      image: takezoe/gitbucket
+     container_name: gitbucket
+
      ports:
-      - "29418:29418"
-      - "18080:8080"
+      # localhost:18080でアクセス可能
+      - "8888:8080"
+      # ssh接続をしたい場合に有効化
+      # - "29418:29418"
+
+     depends_on:
+      - db
+
      volumes:
-      - ./gitbucket:/gitbucket
+      - ./volumes/gitbucket:/gitbucket
 
   jenkins:
 
     # 2/26ではjenkins 2.60.3
     image: jenkins:latest
     container_name: jenkins
+
     ports:
+      # localhost:8080でアクセス可能
       - "8080:8080"
-      - "50000:50000"
+      # slave agant用
+      #- "50000:50000"
+
+    depends_on:
+      - sonarqube
+      - mavenRepository
+      - gitbucket
 
     volumes:
-     - ./jenkins_home:/var/jenkins_home
+     - ./volumes/jenkins_home/maven:/var/maven
+    # - ./volumes/jenkins_home/jobs:/var/jenkins_home/jobs
+    # - ./volumes/jenkins_home/workspace:/var/jenkins_home/workspace
 
     restart: always
-
-# connection fail
-#  sonarqube:
-#
-#    # 2/26ではsonarqube 7.0
-#    image: sonarqube:latest
-#    container_name: sonarqube
-#    ports:
-#      - "9000:9000"
-#
-#    environment:
-#        - SONARQUBE_JDBC_USERNAME=sonar
-#        - SONARQUBE_JDBC_PASSWORD=sonar
-#        - SONARQUBE_JDBC_URL=jdbc:postgresql://10.66.176.21:5432/sonar
-#
-#    links:
-#        - postgresql
-#
-#    volumes:
-#      - ./sonarqube/data:/opt/sonarqube/data
-#      - ./sonarqube/extensions:/opt/sonarqube/extensions
-#
-#    restart: always
-
-networks:
-  sonarnet:
-    driver: bridge
