@@ -1,3 +1,42 @@
+
+# 共通設定
+
+## docker, docker-compose の installの流れ
+
+### proxy 設定(curl, yum)
+
+  /etc/systemd/system/docker.service.d/http-proxy.conf
+  /etc/systemd/system/docker.service.d/https-proxy.conf
+
+[Service]
+Environment="HTTP_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
+
+[Service]
+Environment="HTTPS_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
+
+### ホストへのアクセス
+
+https://npc-0011:5001/
+
+### teratermでのアクセス
+
+10.65.176.126:22
+作成したユーザ/パスワード
+root/alpha-handson
+
+### proxy
+
+proxy-user/password=proxyuser/proxy123
+proxy=http://10.65.100.100:3128
+
+### 後片付け（クリーン）
+
+・ボリュームを削除
+docker volume rm $(docker volume ls -q)
+
+volumesフォルダ配下を削除
+
+
 # docker環境情報
 
 ## Postgresql
@@ -92,40 +131,3 @@ docker run -d --name ngirc -p 6667:6667  yrpri/ngircd
 port:80
 e-mail:user@domain.com
 password:pgadmin
-
-# 共通設定
-
-## docker, docker-compose の installの流れ
-
-### proxy 設定(curl, yum)
-
-  /etc/systemd/system/docker.service.d/http-proxy.conf
-  /etc/systemd/system/docker.service.d/https-proxy.conf
-
-[Service]
-Environment="HTTP_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
-
-[Service]
-Environment="HTTPS_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
-
-### ホストへのアクセス
-
-https://npc-0011:5001/
-
-### teratermでのアクセス
-
-10.65.176.126:22
-作成したユーザ/パスワード
-root/alpha-handson
-
-### proxy
-
-proxy-user/password=proxyuser/proxy123
-proxy=http://10.65.100.100:3128
-
-### 後片付け（クリーン）
-
-・ボリュームを削除
-docker volume rm $(docker volume ls -q)
-
-volumesフォルダ配下を削除
