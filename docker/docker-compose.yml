@@ -2,14 +2,15 @@ version: '3'
 
 services:
 
+  # Database
   db:
-
-    # 2/26ではpostgresql 10.2
     image: postgres:latest
     container_name: postgresql
 
     ports:
       - "5432:5432"
+    networks:
+      - cinet
 
     environment:
       - POSTGRES_USER=postgres
@@ -21,40 +22,21 @@ services:
 
     restart: always
 
-  pgadmin4:
 
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin4
-
-    ports:
-      # localhost:80でアクセス可能（イーサネットのIPで接続）
-      - "80:80"
-
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=user@domain.com
-      - PGADMIN_DEFAULT_PASSWORD=pgadmin
-
-    volumes:
-      - ./volumes/pgadmin/data:/data chorss/docker-pgadmin4
-
-    depends_on:
-      - db
-
+  # SoanrQube
   sonarqube:
-
-    # 2/26ではsonarqube 7.0
     image: sonarqube:latest
     container_name: sonarqube
+    
     ports:
       - "9000:9000"
+    networks:
+      - cinet
 
     environment:
         - SONARQUBE_JDBC_USERNAME=postgres
         - SONARQUBE_JDBC_PASSWORD=p0stgres
         - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
-
-    depends_on:
-      - db
 
     volumes:
       - ./volumes/sonarqube/data:/opt/sonarqube/data
@@ -63,25 +45,16 @@ services:
 
     restart: always
 
-  mavenRepository:
 
+  # MavenRepository
+  mavenRepository:
     image: mattgruter/artifactory
     container_name: artifactory
 
     ports:
      - "8081:8080"
-
-    environment:
-     - DB_TYPE=postgresql
-     # default setting: DB_HOST = DB_TYPE
-     - DB_HOST=db
-     - DB_USER=postgres
-     - DB_PASSWORD=p0stgres
-     # must set port number(:5432)
-     - DB_URL=jdbc:postgresql://db:5432/artifactory
-
-    depends_on:
-      - db
+    networks:
+      - cinet
 
     volumes:
      - ./volumes/artifactory/data:/opt/jfrog/artifactory/data
@@ -89,36 +62,46 @@ services:
 
     restart: always
 
+
+  # Git Server
   gitbucket:
+    image: takezoe/gitbucket
+    container_name: gitbucket
 
-     # 2/26ではgitbucket 4
-     image: takezoe/gitbucket
-     container_name: gitbucket
-
-     ports:
+    ports:
       - "8888:8080"
+    networks:
+      - cinet
 
-     depends_on:
-      - db
-
-     volumes:
+    volumes:
       - ./volumes/gitbucket:/gitbucket
 
-  jenkins:
 
-    # 2/26ではjenkins 2.60.3
+  # Jenkins
+  jenkins:
     image: jenkins:latest
     container_name: jenkins
 
     ports:
       - "8080:8080"
-
-    depends_on:
-      - sonarqube
-      - mavenRepository
-      - gitbucket
+    networks:
+      - cinet
 
     volumes:
      - ./volumes/jenkins_home/maven:/var/maven
 
     restart: always
+
+
+  # IRCD Chat Server
+  ircdServer:
+    image: goldeneggg/centos-ngircd
+    container_name: ngircd
+
+    ports:
+      - "6667:6667"
+
+
+networks:
+  cinet:
+    driver: bridge
