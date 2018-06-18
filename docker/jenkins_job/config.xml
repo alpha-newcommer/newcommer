@@ -31,7 +31,7 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>http://gitbucket:8080/git/newcommer_201805/${user}-zoo-app.git</url>
+        <url>http://gitbucket:8080/git/newcommer_201806/${repository}.git</url>
         <credentialsId>a453d1c3-bb4b-4924-99ea-ed1763d59ab0</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
