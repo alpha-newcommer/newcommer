@@ -6,13 +6,20 @@
 ### proxy 設定(curl, yum)
 
   /etc/systemd/system/docker.service.d/http-proxy.conf
-  /etc/systemd/system/docker.service.d/https-proxy.conf
 
 [Service]
 Environment="HTTP_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
 
+  /etc/systemd/system/docker.service.d/https-proxy.conf
+
 [Service]
 Environment="HTTPS_PROXY=http://proxyuser:proxy123@10.65.100.100:3128/"
+
+* systemctrl 読み込み
+
+systemctl daemon-reload
+systemctl show --property Environment docker(確認)
+sudo systemctl restart docker
 
 ### ホストへのアクセス
 
