@@ -19,6 +19,7 @@ services:
     volumes:
       - ./volumes/postgres/data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
+      - /etc/localtime:/etc/localtime:ro
 
     restart: always
 
@@ -42,6 +43,7 @@ services:
       - ./volumes/sonarqube/data:/opt/sonarqube/data
       # sonarqube用のdatabase作成
       - ./volumes/sonarqube/extensions:/opt/sonarqube/extensions
+      - /etc/localtime:/etc/localtime:ro
 
     restart: always
 
@@ -59,6 +61,7 @@ services:
     volumes:
      - ./volumes/artifactory/data:/opt/jfrog/artifactory/data
      - ./volumes/artifactory/logs:/opt/jfrog/artifactory/logs
+      - /etc/localtime:/etc/localtime:ro
 
     restart: always
 
@@ -75,6 +78,7 @@ services:
 
     volumes:
       - ./volumes/gitbucket:/gitbucket
+      - /etc/localtime:/etc/localtime:ro
 
 
   # Jenkins
@@ -89,6 +93,7 @@ services:
 
     volumes:
      - ./volumes/jenkins_home/maven:/var/maven
+      - /etc/localtime:/etc/localtime:ro
 
     restart: always
 
@@ -120,6 +125,7 @@ services:
     volumes:
       - ./volumes/redmine/files:/usr/src/redmine/files
       - ./volumes/redmine/plugins:/usr/src/redmine/plugins
+      - /etc/localtime:/etc/localtime:ro
 
     restart: always
 
