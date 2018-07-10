@@ -102,6 +102,28 @@ services:
       - "6667:6667"
 
 
+  # Redmine Server
+  redmine:
+    image: redmine
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      REDMINE_DB_POSTGRES: db
+      REDMINE_DB_USERNAME: postgres
+      REDMINE_DB_PASSWORD: p0stgres
+      REDMINE_DB_DATABASE: redmine
+    networks:
+      - cinet
+
+    volumes:
+      - ./volumes/redmine/files:/usr/src/redmine/files
+      - ./volumes/redmine/plugins:/usr/src/redmine/plugins
+
+    restart: always
+
+
 networks:
   cinet:
     driver: bridge
