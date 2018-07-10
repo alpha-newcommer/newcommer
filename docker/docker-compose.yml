@@ -59,8 +59,8 @@ services:
       - cinet
 
     volumes:
-     - ./volumes/artifactory/data:/opt/jfrog/artifactory/data
-     - ./volumes/artifactory/logs:/opt/jfrog/artifactory/logs
+      - ./volumes/artifactory/data:/opt/jfrog/artifactory/data
+      - ./volumes/artifactory/logs:/opt/jfrog/artifactory/logs
       - /etc/localtime:/etc/localtime:ro
 
     restart: always
@@ -92,7 +92,7 @@ services:
       - cinet
 
     volumes:
-     - ./volumes/jenkins_home/maven:/var/maven
+      - ./volumes/jenkins_home/maven:/var/maven
       - /etc/localtime:/etc/localtime:ro
 
     restart: always
