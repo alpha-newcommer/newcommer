@@ -76,6 +76,40 @@ th1.start();
 th1.join();
 ```
 
+----
+### アプリ作成（結果）
+エラーが起きた？  
+実行するごとに表示順がばらばらになった？
+
+一体何が起きているのか。  
+ちょっと以下のスリープ処理を繰り返しの処理の中にランダムにいれて考えてみよう。
+
+```
+Random rnd = new Random();
+
+// 12回払い
+for (int i = 0; i < 12; i++) {
+    Payment payment = new Payment();
+    payment.setName(name);
+    payment.setValue(value);
+    ledger.setPayment(payment);
+
+    // ▼▼▼
+    try {
+        Thread.sleep(rnd.nextInt(100));
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    // ▲▲▲
+    ledger.recordPayment();
+}
+```
+
+----
+### アプリ作成（結果）
+続き
+3人分がちゃんと12回ずつ記録されているか確認してみよう。
+
 >>>>
 ## Java Servletを簡単に学ぼう
 
