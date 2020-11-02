@@ -1,0 +1,14 @@
+<configuration>
+
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="defaultFetchSize" value="100" />
+	</settings>
+
+	<typeAliases>
+		<package name="jp.co.alpha.model" />
+		<package name="jp.co.alpha.repository" />
+	</typeAliases>
+
+</configuration>

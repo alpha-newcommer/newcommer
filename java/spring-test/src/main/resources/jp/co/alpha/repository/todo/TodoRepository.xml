@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<<!DOCTYPE mapper PUBLIC "//UNKNOWN/" "unknown.dtd">
+<mapper namespace="jp.co.alpha.repository.todo.TodoRepository">
+	<select id=“getAll” resultType=“Todo ">
+		SELECT id, contents
+		FROM t_todo
+		ORDER BY id
+	</select>
+
+	<insert id="add" parameterType="Todo">
+		INSERT INTO t_todo (contents)
+		VALUES(#{contents});
+	</insert>
+
+	<delete id="remove" parameterType="int">
+		DELETE FROM t_todo WHERE id = #{id}
+	</delete>
+</mapper>

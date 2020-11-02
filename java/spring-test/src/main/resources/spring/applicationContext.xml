@@ -3,13 +3,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 	<!-- Bean定義 -->
 	<bean class="jp.co.alpha.ConsoleApp" />
-	<bean class="jp.co.alpha.todo.TodoManagerWithMemoryImpl" />
+	<!-- <bean class="jp.co.alpha.todo.TodoManagerWithMemoryImpl" /> -->
+	<bean class="jp.co.alpha.todo.TodoManagerWithDbImpl" />
+
 
 	<context:annotation-config />
 
@@ -17,5 +23,35 @@
 	<aop:aspectj-autoproxy />
 	<context:component-scan
 		base-package="jp.co.alpha.aspect" />
+
+	<!-- property読込 -->
+	<context:property-placeholder
+		location="classpath*:/spring/*.properties" />
+	<!-- DB設定 -->
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName"
+			value="${database.driverClassName}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+		<property name="defaultAutoCommit" value="false" />
+	</bean>
+	<tx:annotation-driven />
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- MyBatis設定 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation"
+			value="classpath:/mybatis/mybatis-config.xml" />
+	</bean>
+
+	<mybatis:scan base-package="jp.co.alpha.repository" />
+
 
 </beans>
