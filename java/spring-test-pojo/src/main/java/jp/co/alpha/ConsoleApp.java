@@ -5,15 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import jp.co.alpha.model.Todo;
 import jp.co.alpha.todo.TodoManager;
+import jp.co.alpha.todo.TodoManagerWithMemoryImpl;
 
 public class ConsoleApp implements Executer {
 
-	@Inject
-	private TodoManager manager;
+	private TodoManager manager = new TodoManagerWithMemoryImpl();
 
 	/*
 	 * (non-Javadoc)
